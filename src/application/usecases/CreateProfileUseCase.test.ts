@@ -1,0 +1,54 @@
+import { describe, it, expect, beforeEach } from 'vitest'
+import { CreateProfileUseCase } from './CreateProfileUseCase'
+import { ProfileRepository } from '../../infrastructure/repositories/ProfileRepository'
+import { LocalStorageAdapter } from '../../infrastructure/storage/LocalStorageAdapter'
+
+describe('CreateProfileUseCase', () => {
+  let useCase: CreateProfileUseCase
+
+  beforeEach(() => {
+    localStorage.clear()
+    useCase = new CreateProfileUseCase(new ProfileRepository(new LocalStorageAdapter()))
+  })
+
+  it('returns a profile with the given name and avatarIndex', () => {
+    const p = useCase.execute('Alice', 2)
+    expect(p.name).toBe('Alice')
+    expect(p.avatarIndex).toBe(2)
+  })
+
+  it('assigns a unique id each time', () => {
+    const a = useCase.execute('Alice', 0)
+    const b = useCase.execute('Bob', 1)
+    expect(a.id).not.toBe(b.id)
+  })
+
+  it('initialises all stats to zero / defaults', () => {
+    const p = useCase.execute('Alice', 0)
+    expect(p.totalXP).toBe(0)
+    expect(p.level).toBe(1)
+    expect(p.gamesPlayed).toBe(0)
+    expect(p.totalCorrect).toBe(0)
+    expect(p.totalAttempts).toBe(0)
+    expect(p.streak).toBe(0)
+  })
+
+  it('initialises skillPoints to 0', () => {
+    const p = useCase.execute('Alice', 0)
+    expect(p.skillPoints).toBe(0)
+  })
+
+  it('initialises all skill levels to 0', () => {
+    const p = useCase.execute('Alice', 0)
+    expect(p.skills.heartSlots).toBe(0)
+    expect(p.skills.xpBoostLevel).toBe(0)
+    expect(p.skills.hintsPerRound).toBe(0)
+    expect(p.skills.skipCharges).toBe(0)
+  })
+
+  it('persists the profile to the repository', () => {
+    useCase.execute('Alice', 0)
+    const repo = new ProfileRepository(new LocalStorageAdapter())
+    expect(repo.findAll()).toHaveLength(1)
+  })
+})

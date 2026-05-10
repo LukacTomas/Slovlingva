@@ -1,0 +1,28 @@
+.xp-bar {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  min-width: 120px;
+}
+
+.xp-bar__track {
+  height: 10px;
+  background: var(--color-xp-bg);
+  border-radius: var(--radius-pill);
+  overflow: hidden;
+}
+
+.xp-bar__fill {
+  height: 100%;
+  background: var(--color-xp);
+  border-radius: var(--radius-pill);
+  transition: width 600ms ease;
+  animation: xpGlow 2s ease-in-out infinite;
+}
+
+.xp-bar__text {
+  font-size: var(--font-size-xs);
+  font-weight: 700;
+  color: var(--color-xp);
+  text-align: center;
+}

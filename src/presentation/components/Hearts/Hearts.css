@@ -1,0 +1,16 @@
+.hearts {
+  display: flex;
+  gap: var(--space-xs);
+  align-items: center;
+}
+
+.hearts__heart {
+  font-size: var(--font-size-lg);
+  color: var(--color-heart);
+  line-height: 1;
+  transition: transform var(--transition-fast), color var(--transition-fast);
+}
+
+.hearts__heart--empty {
+  color: var(--color-heart-empty);
+}

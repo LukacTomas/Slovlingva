@@ -1,0 +1,78 @@
+.tile-bar {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-md);
+  padding: var(--space-lg) var(--space-md);
+  background: var(--color-bg-panel);
+  border-left: 2px solid var(--color-border);
+  align-items: center;
+  justify-content: center;
+  min-width: 96px;
+}
+
+.tile-bar__tile {
+  width: 72px;
+  height: 72px;
+  border-radius: var(--radius-md);
+  font-size: var(--font-size-xl);
+  font-weight: 900;
+  color: var(--color-text-dark);
+  cursor: grab;
+  box-shadow: var(--shadow-tile);
+  transition: transform var(--transition-fast), box-shadow var(--transition-fast);
+  user-select: none;
+  border: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.tile-bar__tile:not(:disabled):hover {
+  transform: translateY(-4px) scale(1.08);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.5);
+}
+
+.tile-bar__tile:not(:disabled):active {
+  cursor: grabbing;
+  transform: scale(0.96);
+}
+
+.tile-bar__tile:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.tile-bar__tile--i       { background: var(--color-i); }
+.tile-bar__tile--i-long  { background: var(--color-i-long); color: #fff; }
+.tile-bar__tile--y       { background: var(--color-y); }
+.tile-bar__tile--y-long  { background: var(--color-y-long); }
+
+/* ─── react-aria managed focus ring ─────────────────────────────────────── */
+.tile-bar__tile--focus-visible {
+  outline: 3px solid #fff;
+  outline-offset: 3px;
+}
+
+/* ─── Mobile: horizontal bar at the bottom ───────────────────────────────── */
+@media (max-width: 600px) {
+  .tile-bar {
+    flex-direction: row;
+    border-left: none;
+    border-top: 2px solid var(--color-border);
+    min-width: unset;
+    width: 100%;
+    padding: var(--space-md) var(--space-lg);
+    gap: var(--space-sm);
+    justify-content: center;
+    flex-shrink: 0;
+  }
+
+  .tile-bar__tile {
+    flex: 1;
+    max-width: 90px;
+    height: 68px;
+    font-size: var(--font-size-lg);
+    /* Larger touch targets */
+    min-width: 56px;
+  }
+}

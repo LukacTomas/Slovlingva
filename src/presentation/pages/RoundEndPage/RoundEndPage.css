@@ -1,0 +1,198 @@
+.round-end {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-lg);
+  gap: var(--space-lg);
+}
+
+.round-end__level-up {
+  background: linear-gradient(135deg, var(--color-primary), var(--color-primary-dark));
+  color: var(--color-text-dark);
+  font-size: var(--font-size-lg);
+  font-weight: 900;
+  padding: var(--space-md) var(--space-xl);
+  border-radius: var(--radius-pill);
+  box-shadow: var(--shadow-glow);
+  animation: levelUpPulse 1.5s ease-in-out 2;
+  display: flex;
+  align-items: center;
+  gap: var(--space-md);
+}
+
+/* ─── SP earned badge inside level-up banner ─────────────────────────────── */
+.round-end__sp-earned {
+  font-size: var(--font-size-sm);
+  font-weight: 900;
+  color: var(--color-xp);
+  background: rgba(0, 0, 0, 0.25);
+  border-radius: var(--radius-pill);
+  padding: 2px var(--space-sm);
+  white-space: nowrap;
+}
+
+.round-end__card {
+  background: var(--color-bg-card);
+  border: 2px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  padding: var(--space-xl);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-lg);
+  max-width: 480px;
+  width: 100%;
+  box-shadow: var(--shadow-card);
+}
+
+.round-end__avatar {
+  font-size: 72px;
+  line-height: 1;
+  filter: drop-shadow(0 4px 8px rgba(0,0,0,0.4));
+}
+
+.round-end__title {
+  font-size: var(--font-size-xl);
+  font-weight: 900;
+  color: var(--color-text);
+  text-align: center;
+}
+
+/* ─── Stars ───────────────────────────────────────────────────────────────── */
+.round-end__stars {
+  display: flex;
+  gap: var(--space-sm);
+}
+
+.round-end__star {
+  font-size: 40px;
+  color: var(--color-border);
+  transition: color var(--transition-med), text-shadow var(--transition-med);
+}
+
+.round-end__star--filled {
+  color: var(--color-xp);
+  text-shadow: 0 0 16px var(--color-xp);
+}
+
+/* ─── Stats row ───────────────────────────────────────────────────────────── */
+.round-end__stats {
+  display: flex;
+  gap: var(--space-xl);
+  justify-content: center;
+}
+
+.round-end__stat {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+}
+
+.round-end__stat-value {
+  font-size: var(--font-size-xl);
+  font-weight: 900;
+  color: var(--color-text);
+}
+
+.round-end__stat-value--xp {
+  color: var(--color-xp);
+}
+
+.round-end__stat-label {
+  font-size: var(--font-size-xs);
+  font-weight: 700;
+  color: var(--color-text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+/* ─── Profile bar ─────────────────────────────────────────────────────────── */
+.round-end__profile-bar {
+  display: flex;
+  align-items: center;
+  gap: var(--space-md);
+  width: 100%;
+  background: var(--color-bg-panel);
+  border-radius: var(--radius-md);
+  padding: var(--space-md);
+}
+
+/* ─── Streak banners ──────────────────────────────────────────────────────── */
+.round-end__streak-banner {
+  background: linear-gradient(135deg, var(--color-warning), #e65100);
+  color: #fff;
+  font-size: var(--font-size-lg);
+  font-weight: 900;
+  padding: var(--space-md) var(--space-xl);
+  border-radius: var(--radius-pill);
+  box-shadow: 0 4px 16px rgba(255, 152, 0, 0.4);
+  animation: levelUpPulse 1.5s ease-in-out 2;
+}
+
+.round-end__streak-start {
+  font-size: var(--font-size-md);
+  font-weight: 800;
+  color: var(--color-warning);
+}
+
+/* ─── Actions ─────────────────────────────────────────────────────────────── */
+.round-end__actions {
+  display: flex;
+  gap: var(--space-md);
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+/* ─── Mobile ──────────────────────────────────────────────────────────────── */
+@media (max-width: 600px) {
+  .round-end {
+    padding: var(--space-md);
+    gap: var(--space-md);
+    justify-content: flex-start;
+    padding-top: var(--space-xl);
+    min-height: 100dvh;
+  }
+
+  .round-end__level-up {
+    font-size: var(--font-size-md);
+    padding: var(--space-sm) var(--space-lg);
+    text-align: center;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: var(--space-sm);
+  }
+
+  .round-end__card {
+    padding: var(--space-lg);
+  }
+
+  .round-end__avatar {
+    font-size: 52px;
+  }
+
+  .round-end__title {
+    font-size: var(--font-size-lg);
+  }
+
+  .round-end__stars .round-end__star {
+    font-size: 32px;
+  }
+
+  .round-end__stats {
+    gap: var(--space-lg);
+  }
+
+  .round-end__actions {
+    flex-direction: column;
+    width: 100%;
+  }
+
+  .round-end__actions .btn {
+    width: 100%;
+    text-align: center;
+    justify-content: center;
+  }
+}

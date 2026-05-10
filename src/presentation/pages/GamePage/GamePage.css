@@ -1,0 +1,237 @@
+.game-page {
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.game-page__loading {
+  height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: var(--font-size-lg);
+  color: var(--color-text-muted);
+}
+
+/* ─── Top bar ─────────────────────────────────────────────────────────────── */
+.game-top-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--space-md) var(--space-lg);
+  background: var(--color-bg-panel);
+  border-bottom: 2px solid var(--color-border);
+  flex-shrink: 0;
+  gap: var(--space-md);
+}
+
+/* ─── Progress dots ───────────────────────────────────────────────────────── */
+.game-progress {
+  display: flex;
+  gap: var(--space-xs);
+  align-items: center;
+}
+
+.game-progress__dot {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: var(--color-border);
+  transition: background var(--transition-fast), transform var(--transition-fast);
+}
+
+.game-progress__dot--done {
+  background: var(--color-primary);
+}
+
+.game-progress__dot--current {
+  background: var(--color-primary);
+  transform: scale(1.4);
+  box-shadow: 0 0 8px var(--color-primary-glow);
+}
+
+/* ─── Timer ───────────────────────────────────────────────────────────────── */
+.game-timer {
+  position: relative;
+  background: var(--color-bg-card);
+  border: 2px solid var(--color-border);
+  border-radius: var(--radius-md);
+  width: 100px;
+  height: 36px;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.game-timer--warning {
+  border-color: var(--color-wrong);
+  animation: shake 500ms ease;
+}
+
+.game-timer__bar {
+  position: absolute;
+  left: 0;
+  top: 0;
+  height: 100%;
+  background: var(--color-primary);
+  opacity: 0.25;
+  transition: width 1s linear, background 0.3s;
+}
+
+.game-timer--warning .game-timer__bar {
+  background: var(--color-wrong);
+}
+
+.game-timer__value {
+  position: relative;
+  font-size: var(--font-size-md);
+  font-weight: 800;
+  color: var(--color-text);
+}
+
+/* ─── Top bar right cluster ───────────────────────────────────────────────── */
+.game-top-bar__right {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+}
+
+/* ─── Skip button ─────────────────────────────────────────────────────────── */
+.game-skip-btn {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: var(--space-xs) var(--space-sm);
+  background: var(--color-bg-card);
+  border: 2px solid var(--color-border);
+  border-radius: var(--radius-md);
+  color: var(--color-text-muted);
+  font-size: var(--font-size-sm);
+  font-weight: 800;
+  transition: border-color var(--transition-fast), color var(--transition-fast);
+}
+
+.game-skip-btn:not(:disabled):hover {
+  border-color: var(--color-warning);
+  color: var(--color-warning);
+}
+
+.game-skip-btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+/* ─── Actions row beneath exercise card ───────────────────────────────────── */
+.game-actions-row {
+  display: flex;
+  align-items: center;
+  gap: var(--space-md);
+  flex-wrap: wrap;
+  justify-content: center;
+  min-height: 36px;
+}
+
+/* ─── Hint button ─────────────────────────────────────────────────────────── */
+.game-hint-btn {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: var(--space-xs) var(--space-md);
+  background: rgba(255, 215, 64, 0.1);
+  border: 2px solid rgba(255, 215, 64, 0.3);
+  border-radius: var(--radius-md);
+  color: var(--color-xp);
+  font-size: var(--font-size-sm);
+  font-weight: 800;
+  transition: background var(--transition-fast), border-color var(--transition-fast);
+}
+
+.game-hint-btn:not(:disabled):hover {
+  background: rgba(255, 215, 64, 0.2);
+  border-color: var(--color-xp);
+}
+
+.game-hint-btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+
+.game-main {
+  flex: 1;
+  display: flex;
+  overflow: hidden;
+}
+
+.game-exercise-area {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-xl);
+  gap: var(--space-lg);
+}
+
+.game-hint {
+  font-size: var(--font-size-sm);
+  color: var(--color-text-muted);
+  font-weight: 600;
+  text-align: center;
+}
+
+/* ─── Mobile layout ───────────────────────────────────────────────────────── */
+@media (max-width: 600px) {
+  .game-page {
+    /* On mobile we need to scroll if content is tall */
+    height: 100dvh;
+  }
+
+  .game-top-bar {
+    padding: var(--space-sm) var(--space-md);
+    gap: var(--space-sm);
+  }
+
+  .game-progress__dot {
+    width: 10px;
+    height: 10px;
+  }
+
+  .game-timer {
+    width: 72px;
+    height: 32px;
+  }
+
+  .game-timer__value {
+    font-size: var(--font-size-sm);
+  }
+
+  .game-skip-btn {
+    font-size: var(--font-size-xs);
+    padding: 4px var(--space-sm);
+  }
+
+  .game-main {
+    /* TileBar moves to the bottom */
+    flex-direction: column;
+    overflow: auto;
+  }
+
+  .game-exercise-area {
+    padding: var(--space-md);
+    gap: var(--space-md);
+    flex: 1;
+    justify-content: center;
+  }
+
+  .game-actions-row {
+    gap: var(--space-sm);
+  }
+
+  .game-hint-btn {
+    font-size: var(--font-size-xs);
+    padding: var(--space-xs) var(--space-sm);
+  }
+}

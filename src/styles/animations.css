@@ -1,0 +1,74 @@
+/* ─── Correct answer ────────────────────────────────────────────────────────── */
+@keyframes correctPop {
+  0%   { transform: scale(1); }
+  40%  { transform: scale(1.25); }
+  70%  { transform: scale(0.95); }
+  100% { transform: scale(1); }
+}
+
+/* ─── Wrong answer shake ────────────────────────────────────────────────────── */
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  20%       { transform: translateX(-8px); }
+  40%       { transform: translateX(8px); }
+  60%       { transform: translateX(-6px); }
+  80%       { transform: translateX(6px); }
+}
+
+/* ─── Heart loss ────────────────────────────────────────────────────────────── */
+@keyframes heartLoss {
+  0%   { transform: scale(1);   opacity: 1; }
+  30%  { transform: scale(1.4); opacity: 1; }
+  100% { transform: scale(0);   opacity: 0; }
+}
+
+/* ─── XP bar fill ───────────────────────────────────────────────────────────── */
+@keyframes xpGlow {
+  0%, 100% { box-shadow: 0 0 6px var(--color-xp); }
+  50%       { box-shadow: 0 0 18px var(--color-xp); }
+}
+
+/* ─── Tile hover lift ───────────────────────────────────────────────────────── */
+@keyframes tileFloat {
+  0%, 100% { transform: translateY(0); }
+  50%       { transform: translateY(-4px); }
+}
+
+/* ─── Round complete celebration ─────────────────────────────────────────────── */
+@keyframes celebrationBounce {
+  0%   { transform: scale(0.5) translateY(40px); opacity: 0; }
+  60%  { transform: scale(1.1) translateY(-10px); opacity: 1; }
+  100% { transform: scale(1)   translateY(0);    opacity: 1; }
+}
+
+/* ─── Fade in ───────────────────────────────────────────────────────────────── */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(12px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ─── Slide in from right ───────────────────────────────────────────────────── */
+@keyframes slideInRight {
+  from { opacity: 0; transform: translateX(40px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+
+/* ─── Level up pulse ────────────────────────────────────────────────────────── */
+@keyframes levelUpPulse {
+  0%   { box-shadow: 0 0 0   rgba(76,175,80,0); }
+  50%  { box-shadow: 0 0 40px rgba(76,175,80,0.8); }
+  100% { box-shadow: 0 0 0   rgba(76,175,80,0); }
+}
+
+/* ─── Drag over glow ────────────────────────────────────────────────────────── */
+@keyframes slotPulse {
+  0%, 100% { border-color: var(--color-border); }
+  50%       { border-color: var(--color-primary); box-shadow: 0 0 12px var(--color-primary-glow); }
+}
+
+/* ─── Utility animation classes ─────────────────────────────────────────────── */
+.anim-correct  { animation: correctPop  400ms ease forwards; }
+.anim-shake    { animation: shake       450ms ease forwards; }
+.anim-fade-in  { animation: fadeIn      400ms ease forwards; }
+.anim-slide-in { animation: slideInRight 350ms ease forwards; }
+.anim-celebrate{ animation: celebrationBounce 600ms cubic-bezier(.17,.67,.41,1.4) forwards; }

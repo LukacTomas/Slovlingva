@@ -1,0 +1,72 @@
+/* ─── Design Tokens ─────────────────────────────────────────────────────────── */
+:root {
+  /* Brand colours */
+  --color-bg:            #1a1d2e;
+  --color-bg-card:       #252840;
+  --color-bg-panel:      #1e2138;
+  --color-border:        #363a5a;
+
+  /* Accent */
+  --color-primary:       #4caf50;
+  --color-primary-dark:  #388e3c;
+  --color-primary-glow:  rgba(76, 175, 80, 0.35);
+
+  /* Character tile colours */
+  --color-i:             #29b6f6;   /* sky blue */
+  --color-i-dark:        #0288d1;
+  --color-i-long:        #7c4dff;   /* violet  (í) */
+  --color-i-long-dark:   #512da8;
+  --color-y:             #9ccc65;   /* lime    (y) */
+  --color-y-dark:        #558b2f;
+  --color-y-long:        #ffa726;   /* orange  (ý) */
+  --color-y-long-dark:   #e65100;
+
+  /* Feedback */
+  --color-correct:       #4caf50;
+  --color-wrong:         #ef5350;
+  --color-warning:       #ffb300;
+
+  /* Hearts */
+  --color-heart:         #ef5350;
+  --color-heart-empty:   #424561;
+
+  /* Text */
+  --color-text:          #e8eaf6;
+  --color-text-muted:    #8a90bb;
+  --color-text-dark:     #1a1d2e;
+
+  /* XP bar */
+  --color-xp:            #ffd740;
+  --color-xp-bg:         #2e3150;
+
+  /* Spacing */
+  --space-xs:   4px;
+  --space-sm:   8px;
+  --space-md:   16px;
+  --space-lg:   24px;
+  --space-xl:   40px;
+
+  /* Radii */
+  --radius-sm:  8px;
+  --radius-md:  14px;
+  --radius-lg:  20px;
+  --radius-pill: 999px;
+
+  /* Shadows */
+  --shadow-card: 0 4px 24px rgba(0,0,0,0.4);
+  --shadow-tile: 0 4px 12px rgba(0,0,0,0.5);
+  --shadow-glow: 0 0 16px var(--color-primary-glow);
+
+  /* Typography */
+  --font-base:   'Nunito', system-ui, sans-serif;
+  --font-size-xs:   12px;
+  --font-size-sm:   14px;
+  --font-size-md:   18px;
+  --font-size-lg:   24px;
+  --font-size-xl:   32px;
+  --font-size-xxl:  48px;
+
+  /* Transitions */
+  --transition-fast: 150ms ease;
+  --transition-med:  300ms ease;
+}
