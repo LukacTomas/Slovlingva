@@ -2,17 +2,17 @@
   min-height: 100vh;
   display: flex;
   flex-direction: column;
-  align-items: center;
-  padding: var(--space-lg);
-  gap: var(--space-xl);
   max-width: 640px;
   margin: 0 auto;
 }
 
-.skills-page__back {
-  align-self: flex-start;
-  padding: var(--space-sm) var(--space-md);
-  font-size: var(--font-size-sm);
+.skills-page__body {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: var(--space-lg);
+  gap: var(--space-xl);
+  flex: 1;
 }
 
 /* ─── Header ──────────────────────────────────────────────────────────────── */
@@ -191,7 +191,7 @@
 
 /* ─── Mobile ──────────────────────────────────────────────────────────────── */
 @media (max-width: 600px) {
-  .skills-page {
+  .skills-page__body {
     padding: var(--space-md);
     gap: var(--space-lg);
   }

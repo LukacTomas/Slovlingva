@@ -1,9 +1,8 @@
 import { useState } from 'react'
 import './ProfileSelectPage.css'
 import { useProfile } from '../../hooks/useProfile'
+import { AVATARS } from '../../../utils/avatars'
 import type { AppPage } from '../../../App'
-
-const AVATARS = ['🐶', '🐱', '🐭', '🐹', '🐰', '🦊', '🐻', '🐼', '🐨', '🐯', '🦁', '🐸']
 
 interface ProfileSelectPageProps {
   onNavigate: (page: AppPage) => void

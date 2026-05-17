@@ -2,78 +2,17 @@
   min-height: 100vh;
   display: flex;
   flex-direction: column;
-  align-items: center;
-  padding: var(--space-lg);
-  gap: var(--space-xl);
   max-width: 560px;
   margin: 0 auto;
 }
 
-.math-setup__back {
-  align-self: flex-start;
-  padding: var(--space-sm) var(--space-md);
-  font-size: var(--font-size-sm);
-}
-
-.math-setup__profile {
-  display: flex;
-  align-items: center;
-  gap: var(--space-md);
-  background: var(--color-bg-card);
-  border: 2px solid var(--color-border);
-  border-radius: var(--radius-lg);
-  padding: var(--space-md) var(--space-lg);
-  width: 100%;
-  box-shadow: var(--shadow-card);
-}
-
-.math-setup__avatar {
-  font-size: 40px;
-  line-height: 1;
-}
-
-.math-setup__profile-info {
-  flex: 1;
+.math-setup__body {
   display: flex;
   flex-direction: column;
-  gap: var(--space-xs);
-  min-width: 0;
-}
-
-.math-setup__profile-name-row {
-  display: flex;
   align-items: center;
-  gap: var(--space-sm);
-  flex-wrap: wrap;
-}
-
-.math-setup__profile-name {
-  font-size: var(--font-size-md);
-  font-weight: 800;
-  color: var(--color-text);
-}
-
-.math-setup__sp-badge {
-  font-size: var(--font-size-xs);
-  font-weight: 800;
-  color: var(--color-xp);
-  background: rgba(255, 215, 64, 0.15);
-  border: 1px solid rgba(255, 215, 64, 0.4);
-  border-radius: var(--radius-pill);
-  padding: 2px var(--space-sm);
-  white-space: nowrap;
-  animation: xpGlow 2s ease-in-out infinite;
-}
-
-.math-setup__streak-badge {
-  font-size: var(--font-size-xs);
-  font-weight: 800;
-  color: var(--color-warning);
-  background: rgba(255, 152, 0, 0.12);
-  border: 1px solid rgba(255, 152, 0, 0.35);
-  border-radius: var(--radius-pill);
-  padding: 2px var(--space-sm);
-  white-space: nowrap;
+  padding: var(--space-lg);
+  gap: var(--space-xl);
+  flex: 1;
 }
 
 .math-setup__title {
@@ -144,7 +83,6 @@
   gap: var(--space-md);
   align-items: center;
   justify-content: center;
-  flex-wrap: wrap;
   width: 100%;
 }
 
@@ -154,26 +92,9 @@
   letter-spacing: 0.03em;
 }
 
-.math-setup__skills-btn {
-  position: relative;
-  font-size: var(--font-size-md);
-  padding: var(--space-md) var(--space-xl);
-}
-
-.math-setup__skills-dot {
-  position: absolute;
-  top: 6px;
-  right: 6px;
-  width: 10px;
-  height: 10px;
-  background: var(--color-xp);
-  border-radius: 50%;
-  border: 2px solid var(--color-bg-panel);
-}
-
 /* ─── Mobile ──────────────────────────────────────────────────────────────── */
 @media (max-width: 600px) {
-  .math-setup {
+  .math-setup__body {
     padding: var(--space-md);
     gap: var(--space-lg);
   }
@@ -183,17 +104,13 @@
   }
 
   .math-setup__footer {
-    flex-direction: column-reverse;
-  }
-
-  .math-setup__start,
-  .math-setup__skills-btn {
-    width: 100%;
-    justify-content: center;
-    text-align: center;
+    flex-direction: column;
   }
 
   .math-setup__start {
+    width: 100%;
+    justify-content: center;
+    text-align: center;
     padding: var(--space-md) var(--space-xl);
     font-size: var(--font-size-md);
   }

@@ -2,48 +2,17 @@
   min-height: 100vh;
   display: flex;
   flex-direction: column;
-  align-items: center;
-  padding: var(--space-lg);
-  gap: var(--space-xl);
   max-width: 560px;
   margin: 0 auto;
 }
 
-.subject-select__back {
-  align-self: flex-start;
-  padding: var(--space-sm) var(--space-md);
-  font-size: var(--font-size-sm);
-}
-
-.subject-select__profile {
-  display: flex;
-  align-items: center;
-  gap: var(--space-md);
-  background: var(--color-bg-card);
-  border: 2px solid var(--color-border);
-  border-radius: var(--radius-lg);
-  padding: var(--space-md) var(--space-lg);
-  width: 100%;
-  box-shadow: var(--shadow-card);
-}
-
-.subject-select__avatar {
-  font-size: 40px;
-  line-height: 1;
-}
-
-.subject-select__profile-info {
-  flex: 1;
+.subject-select__body {
   display: flex;
   flex-direction: column;
-  gap: var(--space-xs);
-  min-width: 0;
-}
-
-.subject-select__profile-name {
-  font-size: var(--font-size-md);
-  font-weight: 800;
-  color: var(--color-text);
+  align-items: center;
+  padding: var(--space-lg);
+  gap: var(--space-xl);
+  flex: 1;
 }
 
 .subject-select__title {
@@ -119,9 +88,21 @@
   line-height: 1.3;
 }
 
+/* ─── Footer ──────────────────────────────────────────────────────────────── */
+.subject-select__footer {
+  display: flex;
+  justify-content: center;
+  width: 100%;
+}
+
+.subject-select__skills-btn {
+  font-size: var(--font-size-md);
+  padding: var(--space-md) var(--space-xl);
+}
+
 /* ─── Mobile ──────────────────────────────────────────────────────────────── */
 @media (max-width: 600px) {
-  .subject-select {
+  .subject-select__body {
     padding: var(--space-md);
     gap: var(--space-lg);
   }

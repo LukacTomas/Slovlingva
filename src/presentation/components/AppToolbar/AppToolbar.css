@@ -1,0 +1,199 @@
+/* ─── App Toolbar ─────────────────────────────────────────────────────────── */
+.app-toolbar {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  padding: var(--space-sm) var(--space-md);
+  background: var(--color-bg-panel);
+  border-bottom: 2px solid var(--color-border);
+  width: 100%;
+  min-height: 48px;
+}
+
+/* ─── Back button ─────────────────────────────────────────────────────────── */
+.app-toolbar__back {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border-radius: var(--radius-sm);
+  background: transparent;
+  color: var(--color-text);
+  font-size: var(--font-size-lg);
+  font-weight: 700;
+  border: none;
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: background var(--transition-fast);
+}
+
+.app-toolbar__back:hover {
+  background: rgba(255, 255, 255, 0.08);
+}
+
+/* ─── Center: XP bar + Level ──────────────────────────────────────────────── */
+.app-toolbar__center {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  min-width: 0;
+}
+
+/* Override XP bar to single-row layout inside the toolbar */
+.app-toolbar__center .xp-bar {
+  flex: 1;
+  min-width: 80px;
+  flex-direction: row;
+  align-items: center;
+  gap: var(--space-sm);
+}
+
+.app-toolbar__center .xp-bar__track {
+  flex: 1;
+}
+
+.app-toolbar__center .xp-bar__text {
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.app-toolbar__center .level-badge {
+  padding: 1px 8px;
+  min-width: 44px;
+  height: 36px;
+  box-sizing: border-box;
+  justify-content: center;
+}
+
+.app-toolbar__center .level-badge .level-badge__label {
+  font-size: 10px;
+}
+
+.app-toolbar__center .level-badge .level-badge__value {
+  font-size: var(--font-size-sm);
+}
+
+/* ─── Avatar menu button ──────────────────────────────────────────────────── */
+.app-toolbar__menu-anchor {
+  position: relative;
+  flex-shrink: 0;
+}
+
+.app-toolbar__avatar-btn {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  height: 36px;
+  padding: 0 var(--space-sm);
+  box-sizing: border-box;
+  background: var(--color-bg-card);
+  border: 2px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  font-size: 24px;
+  line-height: 1;
+  position: relative;
+  transition: border-color var(--transition-fast);
+}
+
+.app-toolbar__avatar-btn:hover {
+  border-color: var(--color-primary);
+}
+
+.app-toolbar__caret {
+  font-size: 10px;
+  color: var(--color-text-muted);
+}
+
+.app-toolbar__sp-dot {
+  position: absolute;
+  top: -2px;
+  right: -2px;
+  width: 10px;
+  height: 10px;
+  background: var(--color-xp);
+  border-radius: 50%;
+  border: 2px solid var(--color-bg-panel);
+}
+
+/* ─── Dropdown menu ───────────────────────────────────────────────────────── */
+.app-toolbar__dropdown {
+  position: absolute;
+  top: calc(100% + 6px);
+  right: 0;
+  min-width: 200px;
+  background: var(--color-bg-card);
+  border: 2px solid var(--color-border);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-card);
+  overflow: hidden;
+  animation: toolbarMenuIn 150ms ease;
+}
+
+@keyframes toolbarMenuIn {
+  from {
+    opacity: 0;
+    transform: translateY(-6px) scale(0.97);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.app-toolbar__dropdown-header {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: var(--space-sm) var(--space-md);
+  border-bottom: 1px solid var(--color-border);
+}
+
+.app-toolbar__dropdown-name {
+  font-size: var(--font-size-sm);
+  font-weight: 800;
+  color: var(--color-text);
+}
+
+.app-toolbar__streak {
+  font-size: var(--font-size-xs);
+  font-weight: 700;
+  color: var(--color-warning);
+}
+
+.app-toolbar__dropdown-item {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  width: 100%;
+  padding: var(--space-sm) var(--space-md);
+  background: transparent;
+  border: none;
+  color: var(--color-text);
+  font-size: var(--font-size-sm);
+  font-weight: 700;
+  cursor: pointer;
+  text-align: left;
+  transition: background var(--transition-fast);
+}
+
+.app-toolbar__dropdown-item:hover {
+  background: rgba(255, 255, 255, 0.06);
+}
+
+.app-toolbar__sp-badge {
+  margin-left: auto;
+  font-size: var(--font-size-xs);
+  font-weight: 800;
+  color: var(--color-xp);
+  background: rgba(255, 215, 64, 0.15);
+  border: 1px solid rgba(255, 215, 64, 0.4);
+  border-radius: var(--radius-pill);
+  padding: 1px 6px;
+  animation: xpGlow 2s ease-in-out infinite;
+}

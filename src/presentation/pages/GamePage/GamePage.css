@@ -214,16 +214,21 @@
   }
 
   .game-main {
-    /* TileBar moves to the bottom */
-    flex-direction: column;
-    overflow: auto;
+    /* TileBar moves to the bottom — grid guarantees tile bar is always visible */
+    display: grid;
+    grid-template-rows: 1fr auto;
+    overflow: hidden;
   }
 
   .game-exercise-area {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
     padding: var(--space-md);
     gap: var(--space-md);
-    flex: 1;
-    justify-content: center;
+    min-height: 0;
+    overflow-y: auto;
   }
 
   .game-actions-row {

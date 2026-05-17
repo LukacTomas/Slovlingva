@@ -4,9 +4,8 @@ import { useMathGame } from '../../hooks/useMathGame'
 import { useProfile } from '../../hooks/useProfile'
 import { LevelBadge } from '../../components/LevelBadge/LevelBadge'
 import { XPBar } from '../../components/XPBar/XPBar'
+import { AVATARS } from '../../../utils/avatars'
 import type { AppPage } from '../../../App'
-
-const AVATARS = ['🐶', '🐱', '🐭', '🐹', '🐰', '🦊', '🐻', '🐼', '🐨', '🐯', '🦁', '🐸']
 
 interface RoundEndPageProps {
   onNavigate: (page: AppPage) => void
