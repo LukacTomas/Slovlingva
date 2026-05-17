@@ -1,0 +1,94 @@
+.math-card {
+  background: var(--color-bg-card);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-card);
+  padding: var(--space-xl) var(--space-xl);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-lg);
+  max-width: 680px;
+  width: 100%;
+  animation: fadeIn 350ms ease forwards;
+}
+
+/* ─── Equation row ────────────────────────────────────────────────────────── */
+.math-card__equation {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-md);
+  font-size: 48px;
+  font-weight: 900;
+  color: var(--color-text);
+  line-height: 1;
+}
+
+.math-card__operand {
+  min-width: 1.2em;
+  text-align: center;
+}
+
+.math-card__operator {
+  color: var(--color-warning);
+}
+
+.math-card__equals {
+  color: var(--color-text-muted);
+}
+
+/* ─── Answer slot ─────────────────────────────────────────────────────────── */
+.math-card__answer-slot {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 80px;
+  min-height: 68px;
+  border-radius: var(--radius-md);
+  border: 3px dashed var(--color-border);
+  background: var(--color-bg-panel);
+  font-size: 48px;
+  font-weight: 900;
+  color: var(--color-text);
+  padding: 0 var(--space-md);
+  transition: border-color var(--transition-fast), background var(--transition-fast);
+}
+
+.math-card__answer-slot--empty {
+  color: var(--color-text-muted);
+}
+
+.math-card__answer-slot--correct {
+  border-color: var(--color-correct);
+  border-style: solid;
+  background: rgba(76, 175, 80, 0.2);
+  color: var(--color-correct);
+  animation: correctPop 400ms ease forwards;
+}
+
+.math-card__answer-slot--wrong {
+  border-color: var(--color-wrong);
+  border-style: solid;
+  background: rgba(239, 83, 80, 0.2);
+  color: var(--color-wrong);
+  animation: shake 450ms ease forwards;
+}
+
+/* ─── Mobile ──────────────────────────────────────────────────────────────── */
+@media (max-width: 600px) {
+  .math-card {
+    padding: var(--space-lg) var(--space-md);
+    border-radius: var(--radius-md);
+  }
+
+  .math-card__equation {
+    font-size: 36px;
+    gap: var(--space-sm);
+  }
+
+  .math-card__answer-slot {
+    min-width: 60px;
+    min-height: 52px;
+    font-size: 36px;
+  }
+}

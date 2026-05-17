@@ -1,0 +1,141 @@
+.subject-select {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: var(--space-lg);
+  gap: var(--space-xl);
+  max-width: 560px;
+  margin: 0 auto;
+}
+
+.subject-select__back {
+  align-self: flex-start;
+  padding: var(--space-sm) var(--space-md);
+  font-size: var(--font-size-sm);
+}
+
+.subject-select__profile {
+  display: flex;
+  align-items: center;
+  gap: var(--space-md);
+  background: var(--color-bg-card);
+  border: 2px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  padding: var(--space-md) var(--space-lg);
+  width: 100%;
+  box-shadow: var(--shadow-card);
+}
+
+.subject-select__avatar {
+  font-size: 40px;
+  line-height: 1;
+}
+
+.subject-select__profile-info {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xs);
+  min-width: 0;
+}
+
+.subject-select__profile-name {
+  font-size: var(--font-size-md);
+  font-weight: 800;
+  color: var(--color-text);
+}
+
+.subject-select__title {
+  font-size: var(--font-size-xl);
+  font-weight: 900;
+  color: var(--color-text);
+}
+
+/* ─── Subject cards grid ──────────────────────────────────────────────────── */
+.subject-select__grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-lg);
+  width: 100%;
+}
+
+.subject-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-md);
+  padding: var(--space-xl) var(--space-lg);
+  background: var(--color-bg-card);
+  border: 3px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  cursor: pointer;
+  transition: transform var(--transition-fast), border-color var(--transition-fast),
+    box-shadow var(--transition-fast);
+  box-shadow: var(--shadow-card);
+}
+
+.subject-card:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-glow);
+}
+
+.subject-card--slovencina:hover,
+.subject-card--slovencina:focus-visible {
+  border-color: var(--color-primary);
+}
+
+.subject-card--matematika:hover,
+.subject-card--matematika:focus-visible {
+  border-color: var(--color-warning);
+}
+
+.subject-card__icon {
+  font-size: 48px;
+  font-weight: 900;
+  line-height: 1;
+  color: var(--color-text-muted);
+}
+
+.subject-card--slovencina .subject-card__icon {
+  color: var(--color-primary);
+}
+
+.subject-card--matematika .subject-card__icon {
+  color: var(--color-warning);
+}
+
+.subject-card__name {
+  font-size: var(--font-size-lg);
+  font-weight: 900;
+  color: var(--color-text);
+}
+
+.subject-card__desc {
+  font-size: var(--font-size-xs);
+  font-weight: 700;
+  color: var(--color-text-muted);
+  text-align: center;
+  line-height: 1.3;
+}
+
+/* ─── Mobile ──────────────────────────────────────────────────────────────── */
+@media (max-width: 600px) {
+  .subject-select {
+    padding: var(--space-md);
+    gap: var(--space-lg);
+  }
+
+  .subject-select__grid {
+    grid-template-columns: 1fr;
+    gap: var(--space-md);
+  }
+
+  .subject-card {
+    padding: var(--space-lg);
+  }
+
+  .subject-card__icon {
+    font-size: 36px;
+  }
+}

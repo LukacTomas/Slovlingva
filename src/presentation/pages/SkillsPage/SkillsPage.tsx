@@ -25,7 +25,7 @@ export function SkillsPage({ onNavigate }: SkillsPageProps) {
     <main className="skills-page">
       <button
         className="skills-page__back btn btn--ghost"
-        onClick={() => onNavigate('game-setup')}
+        onClick={() => onNavigate('subject-select')}
       >
         ← Späť
       </button>

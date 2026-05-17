@@ -1,0 +1,200 @@
+.math-setup {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: var(--space-lg);
+  gap: var(--space-xl);
+  max-width: 560px;
+  margin: 0 auto;
+}
+
+.math-setup__back {
+  align-self: flex-start;
+  padding: var(--space-sm) var(--space-md);
+  font-size: var(--font-size-sm);
+}
+
+.math-setup__profile {
+  display: flex;
+  align-items: center;
+  gap: var(--space-md);
+  background: var(--color-bg-card);
+  border: 2px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  padding: var(--space-md) var(--space-lg);
+  width: 100%;
+  box-shadow: var(--shadow-card);
+}
+
+.math-setup__avatar {
+  font-size: 40px;
+  line-height: 1;
+}
+
+.math-setup__profile-info {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xs);
+  min-width: 0;
+}
+
+.math-setup__profile-name-row {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  flex-wrap: wrap;
+}
+
+.math-setup__profile-name {
+  font-size: var(--font-size-md);
+  font-weight: 800;
+  color: var(--color-text);
+}
+
+.math-setup__sp-badge {
+  font-size: var(--font-size-xs);
+  font-weight: 800;
+  color: var(--color-xp);
+  background: rgba(255, 215, 64, 0.15);
+  border: 1px solid rgba(255, 215, 64, 0.4);
+  border-radius: var(--radius-pill);
+  padding: 2px var(--space-sm);
+  white-space: nowrap;
+  animation: xpGlow 2s ease-in-out infinite;
+}
+
+.math-setup__streak-badge {
+  font-size: var(--font-size-xs);
+  font-weight: 800;
+  color: var(--color-warning);
+  background: rgba(255, 152, 0, 0.12);
+  border: 1px solid rgba(255, 152, 0, 0.35);
+  border-radius: var(--radius-pill);
+  padding: 2px var(--space-sm);
+  white-space: nowrap;
+}
+
+.math-setup__title {
+  font-size: var(--font-size-xl);
+  font-weight: 900;
+  color: var(--color-text);
+}
+
+.math-setup__options {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xl);
+  width: 100%;
+}
+
+/* ─── Category grid ───────────────────────────────────────────────────────── */
+.math-category-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: var(--space-sm);
+}
+
+.math-category-btn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-xs);
+  padding: var(--space-md) var(--space-sm);
+  background: var(--color-bg-panel);
+  border: 2px solid var(--color-border);
+  border-radius: var(--radius-md);
+  color: var(--color-text-muted);
+  font-weight: 800;
+  transition: border-color var(--transition-fast), color var(--transition-fast),
+    transform var(--transition-fast);
+}
+
+.math-category-btn:hover {
+  border-color: var(--color-warning);
+  transform: translateY(-2px);
+}
+
+.math-category-btn--active {
+  border-color: var(--color-warning);
+  background: rgba(255, 152, 0, 0.12);
+  color: var(--color-warning);
+}
+
+.math-category-btn__icon {
+  font-size: var(--font-size-xl);
+  font-weight: 900;
+  line-height: 1;
+}
+
+.math-category-btn__label {
+  font-size: var(--font-size-xs);
+  text-align: center;
+}
+
+/* Last item (Násobilka) spans full width when odd count */
+.math-category-btn:last-child:nth-child(odd) {
+  grid-column: 1 / -1;
+}
+
+/* ─── Footer row ──────────────────────────────────────────────────────────── */
+.math-setup__footer {
+  display: flex;
+  gap: var(--space-md);
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
+  width: 100%;
+}
+
+.math-setup__start {
+  font-size: var(--font-size-lg);
+  padding: var(--space-md) 60px;
+  letter-spacing: 0.03em;
+}
+
+.math-setup__skills-btn {
+  position: relative;
+  font-size: var(--font-size-md);
+  padding: var(--space-md) var(--space-xl);
+}
+
+.math-setup__skills-dot {
+  position: absolute;
+  top: 6px;
+  right: 6px;
+  width: 10px;
+  height: 10px;
+  background: var(--color-xp);
+  border-radius: 50%;
+  border: 2px solid var(--color-bg-panel);
+}
+
+/* ─── Mobile ──────────────────────────────────────────────────────────────── */
+@media (max-width: 600px) {
+  .math-setup {
+    padding: var(--space-md);
+    gap: var(--space-lg);
+  }
+
+  .math-category-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .math-setup__footer {
+    flex-direction: column-reverse;
+  }
+
+  .math-setup__start,
+  .math-setup__skills-btn {
+    width: 100%;
+    justify-content: center;
+    text-align: center;
+  }
+
+  .math-setup__start {
+    padding: var(--space-md) var(--space-xl);
+    font-size: var(--font-size-md);
+  }
+}

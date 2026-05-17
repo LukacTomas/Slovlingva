@@ -18,7 +18,7 @@ export function ProfileSelectPage({ onNavigate }: ProfileSelectPageProps) {
 
   const handleSelect = (id: string) => {
     selectProfile(id)
-    onNavigate('game-setup')
+    onNavigate('subject-select')
   }
 
   const handleCreate = () => {
@@ -27,7 +27,7 @@ export function ProfileSelectPage({ onNavigate }: ProfileSelectPageProps) {
     if (trimmed.length > 20) { setNameError('Meno je príliš dlhé'); return }
     const profile = createProfile(trimmed, avatarIndex)
     selectProfile(profile.id)
-    onNavigate('game-setup')
+    onNavigate('subject-select')
   }
 
   const handleDelete = (e: React.MouseEvent, id: string) => {

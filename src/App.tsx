@@ -2,12 +2,25 @@ import { useEffect, useState } from 'react'
 import { useGame } from './presentation/hooks/useGame'
 import { useProfile } from './presentation/hooks/useProfile'
 import { ProfileSelectPage } from './presentation/pages/ProfileSelectPage/ProfileSelectPage'
+import { SubjectSelectPage } from './presentation/pages/SubjectSelectPage/SubjectSelectPage'
 import { GameSetupPage } from './presentation/pages/GameSetupPage/GameSetupPage'
 import { GamePage } from './presentation/pages/GamePage/GamePage'
 import { RoundEndPage } from './presentation/pages/RoundEndPage/RoundEndPage'
 import { SkillsPage } from './presentation/pages/SkillsPage/SkillsPage'
+import { MathSetupPage } from './presentation/pages/MathSetupPage/MathSetupPage'
+import { MathGamePage } from './presentation/pages/MathGamePage/MathGamePage'
 
-export type AppPage = 'loading' | 'profile-select' | 'game-setup' | 'game' | 'round-end' | 'skills'
+export type AppPage =
+  | 'loading'
+  | 'profile-select'
+  | 'subject-select'
+  | 'game-setup'
+  | 'game'
+  | 'round-end'
+  | 'skills'
+  | 'math-setup'
+  | 'math-game'
+  | 'math-round-end'
 
 function LoadingScreen() {
   return (
@@ -45,6 +58,8 @@ function App() {
       return <LoadingScreen />
     case 'profile-select':
       return <ProfileSelectPage onNavigate={setPage} />
+    case 'subject-select':
+      return <SubjectSelectPage onNavigate={setPage} />
     case 'game-setup':
       return <GameSetupPage onNavigate={setPage} />
     case 'game':
@@ -53,6 +68,12 @@ function App() {
       return <RoundEndPage onNavigate={setPage} />
     case 'skills':
       return <SkillsPage onNavigate={setPage} />
+    case 'math-setup':
+      return <MathSetupPage onNavigate={setPage} />
+    case 'math-game':
+      return <MathGamePage onNavigate={setPage} />
+    case 'math-round-end':
+      return <RoundEndPage onNavigate={setPage} isMath />
   }
 }
 

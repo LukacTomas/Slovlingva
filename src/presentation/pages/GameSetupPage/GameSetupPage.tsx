@@ -73,8 +73,8 @@ export function GameSetupPage({ onNavigate }: GameSetupPageProps) {
 
   return (
     <main className="game-setup">
-      <button className="game-setup__back btn btn--ghost" onClick={() => onNavigate('profile-select')}>
-        ← Späť
+      <button className="game-setup__back btn btn--ghost" onClick={() => onNavigate('subject-select')}>
+        &larr; Sp&auml;ť
       </button>
 
       <div className="game-setup__profile">

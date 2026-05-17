@@ -1,0 +1,52 @@
+.math-game {
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.math-game__loading {
+  height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: var(--font-size-lg);
+  color: var(--color-text-muted);
+}
+
+/* ─── Main content ────────────────────────────────────────────────────────── */
+.math-game__main {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-xl);
+  gap: var(--space-xl);
+  overflow: auto;
+}
+
+.math-game__exercise-area {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-lg);
+}
+
+.math-game__answer-area {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+}
+
+/* ─── Mobile ──────────────────────────────────────────────────────────────── */
+@media (max-width: 600px) {
+  .math-game {
+    height: 100dvh;
+  }
+
+  .math-game__main {
+    padding: var(--space-md);
+    gap: var(--space-lg);
+  }
+}

@@ -1,5 +1,6 @@
 import './RoundEndPage.css'
 import { useGame } from '../../hooks/useGame'
+import { useMathGame } from '../../hooks/useMathGame'
 import { useProfile } from '../../hooks/useProfile'
 import { LevelBadge } from '../../components/LevelBadge/LevelBadge'
 import { XPBar } from '../../components/XPBar/XPBar'
@@ -9,6 +10,7 @@ const AVATARS = ['🐶', '🐱', '🐭', '🐹', '🐰', '🦊', '🐻', '🐼',
 
 interface RoundEndPageProps {
   onNavigate: (page: AppPage) => void
+  isMath?: boolean
 }
 
 function AccuracyStar({ accuracy }: { accuracy: number }) {
@@ -24,27 +26,39 @@ function AccuracyStar({ accuracy }: { accuracy: number }) {
   )
 }
 
-export function RoundEndPage({ onNavigate }: RoundEndPageProps) {
-  const { lastRoundResult, gameState, resetGame, startRound } = useGame()
+export function RoundEndPage({ onNavigate, isMath = false }: RoundEndPageProps) {
+  const slovGame = useGame()
+  const mathGame = useMathGame()
+
+  const lastRoundResult = isMath ? mathGame.lastRoundResult : slovGame.lastRoundResult
+  const gameStatus = isMath
+    ? mathGame.gameState?.status
+    : slovGame.gameState?.status
+  const resetGame = isMath ? mathGame.resetGame : slovGame.resetGame
   const { activeProfile } = useProfile()
 
-  if (!lastRoundResult || !gameState || !activeProfile) {
+  if (!lastRoundResult || !activeProfile) {
     onNavigate('profile-select')
     return null
   }
 
-  const isGameOver = gameState.status === 'game_over'
+  const isGameOver = gameStatus === 'game_over'
   const accuracy = lastRoundResult.accuracy
   const pct = Math.round(accuracy * 100)
 
   const handlePlayAgain = () => {
-    startRound(gameState.config)
-    onNavigate('game')
+    if (isMath) {
+      mathGame.startRound(mathGame.gameState!.config)
+      onNavigate('math-game')
+    } else {
+      slovGame.startRound(slovGame.gameState!.config)
+      onNavigate('game')
+    }
   }
 
   const handleSetup = () => {
     resetGame()
-    onNavigate('game-setup')
+    onNavigate(isMath ? 'math-setup' : 'game-setup')
   }
 
   return (
