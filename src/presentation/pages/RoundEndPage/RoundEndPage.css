@@ -1,5 +1,12 @@
-.round-end {
+/* ─── Page wrapper (toolbar + body) ───────────────────────────────────────── */
+.round-end-page {
   min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.round-end__body {
+  flex: 1;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -45,12 +52,6 @@
   max-width: 480px;
   width: 100%;
   box-shadow: var(--shadow-card);
-}
-
-.round-end__avatar {
-  font-size: 72px;
-  line-height: 1;
-  filter: drop-shadow(0 4px 8px rgba(0,0,0,0.4));
 }
 
 .round-end__title {
@@ -109,17 +110,6 @@
   letter-spacing: 0.08em;
 }
 
-/* ─── Profile bar ─────────────────────────────────────────────────────────── */
-.round-end__profile-bar {
-  display: flex;
-  align-items: center;
-  gap: var(--space-md);
-  width: 100%;
-  background: var(--color-bg-panel);
-  border-radius: var(--radius-md);
-  padding: var(--space-md);
-}
-
 /* ─── Streak banners ──────────────────────────────────────────────────────── */
 .round-end__streak-banner {
   background: linear-gradient(135deg, var(--color-warning), #e65100);
@@ -148,12 +138,15 @@
 
 /* ─── Mobile ──────────────────────────────────────────────────────────────── */
 @media (max-width: 600px) {
-  .round-end {
+  .round-end-page {
+    min-height: 100dvh;
+  }
+
+  .round-end__body {
     padding: var(--space-md);
     gap: var(--space-md);
     justify-content: flex-start;
     padding-top: var(--space-xl);
-    min-height: 100dvh;
   }
 
   .round-end__level-up {
@@ -167,10 +160,6 @@
 
   .round-end__card {
     padding: var(--space-lg);
-  }
-
-  .round-end__avatar {
-    font-size: 52px;
   }
 
   .round-end__title {
