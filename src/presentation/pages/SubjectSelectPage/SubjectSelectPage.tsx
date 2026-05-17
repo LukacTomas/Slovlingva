@@ -1,23 +1,19 @@
+import { useNavigate } from '@tanstack/react-router'
 import './SubjectSelectPage.css'
 import { useProfile } from '../../hooks/useProfile'
 import { AppToolbar } from '../../components/AppToolbar/AppToolbar'
-import type { AppPage } from '../../../App'
 
-interface SubjectSelectPageProps {
-  onNavigate: (page: AppPage) => void
-}
-
-export function SubjectSelectPage({ onNavigate }: SubjectSelectPageProps) {
+export function SubjectSelectPage() {
+  const navigate = useNavigate()
   const { activeProfile } = useProfile()
 
   if (!activeProfile) {
-    onNavigate('profile-select')
     return null
   }
 
   return (
-    <main className="subject-select">
-      <AppToolbar onBack={() => onNavigate('profile-select')} onNavigate={onNavigate} />
+    <main className="subject-select" data-testid="subject-select-page">
+      <AppToolbar onBack={() => navigate({ to: '/login' })} />
 
       <div className="subject-select__body">
         <h1 className="subject-select__title">Vyber si predmet</h1>
@@ -25,7 +21,8 @@ export function SubjectSelectPage({ onNavigate }: SubjectSelectPageProps) {
         <div className="subject-select__grid">
           <button
             className="subject-card subject-card--slovencina"
-            onClick={() => onNavigate('game-setup')}
+            data-testid="subject-slovencina"
+            onClick={() => navigate({ to: '/game/slovencina/setup', search: {} })}
             aria-label="Slovenčina"
           >
             <span className="subject-card__icon">Aa</span>
@@ -35,7 +32,8 @@ export function SubjectSelectPage({ onNavigate }: SubjectSelectPageProps) {
 
           <button
             className="subject-card subject-card--matematika"
-            onClick={() => onNavigate('math-setup')}
+            data-testid="subject-matematika"
+            onClick={() => navigate({ to: '/game/matematika/setup', search: {} })}
             aria-label="Matematika"
           >
             <span className="subject-card__icon">123</span>
@@ -45,7 +43,7 @@ export function SubjectSelectPage({ onNavigate }: SubjectSelectPageProps) {
         </div>
 
         <div className="subject-select__footer">
-          <button className="btn btn--ghost subject-select__skills-btn" onClick={() => onNavigate('skills')}>
+          <button className="btn btn--ghost subject-select__skills-btn" data-testid="skills-btn" onClick={() => navigate({ to: '/skills' })}>
             ✦ Schopnosti
           </button>
         </div>

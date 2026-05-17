@@ -65,6 +65,7 @@ function BlankSlot({ blank, selected, onClick, onDrop }: BlankSlotProps) {
   return (
     <span
       className={`blank-slot${stateClass}${selectedClass}`}
+      data-testid="blank-slot"
       role="button"
       tabIndex={0}
       aria-label={label}
@@ -101,7 +102,7 @@ export function ExerciseCard({
   const tokens = buildWordTokens(exercise.parts)
 
   return (
-    <div className={`exercise-card exercise-card--${exercise.type}`}>
+    <div className={`exercise-card exercise-card--${exercise.type}`} data-testid="exercise-card">
       {isWord && (
         <p className="exercise-card__hint">Doplň správne písmeno:</p>
       )}

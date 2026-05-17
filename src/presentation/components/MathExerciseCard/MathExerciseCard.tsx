@@ -20,7 +20,7 @@ export function MathExerciseCard({ exercise, answerState, playerAnswer }: MathEx
   ].join(' ').trim()
 
   return (
-    <div className="math-card anim-fade-in">
+    <div className="math-card anim-fade-in" data-testid="math-exercise-card">
       <div className="math-card__equation" aria-label={exercise.displayText}>
         <span className="math-card__operand">{exercise.operand1}</span>
         <span className="math-card__operator">{exercise.operator}</span>

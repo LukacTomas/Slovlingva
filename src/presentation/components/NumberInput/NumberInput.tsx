@@ -46,7 +46,7 @@ export function NumberInput({ onSubmit, disabled = false, lastCorrect = null }: 
         : ''
 
   return (
-    <div className={`number-input ${stateClass}`.trim()}>
+    <div className={`number-input ${stateClass}`.trim()} data-testid="number-input">
       <input
         ref={inputRef}
         className="number-input__field"
@@ -60,12 +60,14 @@ export function NumberInput({ onSubmit, disabled = false, lastCorrect = null }: 
         placeholder="?"
         autoComplete="off"
         aria-label="Zadaj odpoveď"
+        data-testid="number-input-field"
       />
       <button
         className="number-input__submit btn btn--primary"
         onClick={handleSubmit}
         disabled={disabled || value === ''}
         aria-label="Potvrdiť odpoveď"
+        data-testid="number-input-submit"
       >
         OK
       </button>

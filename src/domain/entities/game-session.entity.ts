@@ -1,4 +1,3 @@
-import type { AppPage } from '../../App'
 import type { IRoundResult, GameStatus } from './game.entity'
 
 /** Reason an exercise was marked as failed during a round. */
@@ -13,10 +12,10 @@ export interface IFailedExerciseRecord {
 /** Subject identifier — extensible for future subjects. */
 export type SubjectId = 'slovencina' | 'matematika'
 
-/** Route info so shared pages know where to navigate per subject. */
+/** Route paths so shared pages know where to navigate per subject. */
 export interface ISubjectRoutes {
-  setupPage: AppPage
-  gamePage: AppPage
+  setupPage: string
+  gamePage: string
 }
 
 /** Data written by a subject store when a round ends, read by shared pages. */

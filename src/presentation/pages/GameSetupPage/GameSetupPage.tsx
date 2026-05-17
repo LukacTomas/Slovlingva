@@ -1,9 +1,9 @@
 import { useState } from 'react'
+import { useNavigate } from '@tanstack/react-router'
 import './GameSetupPage.css'
 import { useProfile } from '../../hooks/useProfile'
 import { useGame } from '../../hooks/useGame'
 import { AppToolbar } from '../../components/AppToolbar/AppToolbar'
-import type { AppPage } from '../../../App'
 import type { GameMode, DifficultyLevel, VybraneSlovaGroup } from '../../../domain/entities/exercise.entity'
 
 const DIFFICULTY_LABELS: Record<DifficultyLevel, string> = {
@@ -24,11 +24,8 @@ const VYBRANE_GROUPS: { value: VybraneSlovaGroup; label: string }[] = [
   { value: 'mix', label: 'Mix' },
 ]
 
-interface GameSetupPageProps {
-  onNavigate: (page: AppPage) => void
-}
-
-export function GameSetupPage({ onNavigate }: GameSetupPageProps) {
+export function GameSetupPage() {
+  const navigate = useNavigate()
   const { activeProfile } = useProfile()
   const { startRound } = useGame()
 
@@ -50,17 +47,12 @@ export function GameSetupPage({ onNavigate }: GameSetupPageProps) {
       skipsPerRound: skills.skipCharges,
       ...(mode === 'vybrane-slova' ? { vybraneSlovaGroup } : {}),
     })
-    onNavigate('game')
-  }
-
-  if (!activeProfile) {
-    onNavigate('profile-select')
-    return null
+    navigate({ to: '/game/slovencina/play' })
   }
 
   return (
-    <main className="game-setup">
-      <AppToolbar onBack={() => onNavigate('subject-select')} onNavigate={onNavigate} />
+    <main className="game-setup" data-testid="game-setup-page">
+      <AppToolbar onBack={() => navigate({ to: '/dashboard' })} />
 
       <div className="game-setup__body">
         <h1 className="game-setup__title">Nastav hru</h1>
@@ -72,18 +64,21 @@ export function GameSetupPage({ onNavigate }: GameSetupPageProps) {
             <div className="setup-toggle">
               <button
                 className={`setup-toggle__btn${mode === 'words' ? ' setup-toggle__btn--active' : ''}`}
+                data-testid="mode-words"
                 onClick={() => setMode('words')}
               >
                 Slová
               </button>
               <button
                 className={`setup-toggle__btn${mode === 'sentences' ? ' setup-toggle__btn--active' : ''}`}
+                data-testid="mode-sentences"
                 onClick={() => setMode('sentences')}
               >
                 Vety
               </button>
               <button
                 className={`setup-toggle__btn${mode === 'vybrane-slova' ? ' setup-toggle__btn--active' : ''}`}
+                data-testid="mode-vybrane"
                 onClick={() => setMode('vybrane-slova')}
               >
                 Vybrané slová
@@ -99,6 +94,7 @@ export function GameSetupPage({ onNavigate }: GameSetupPageProps) {
                   <button
                     key={d}
                     className={`setup-difficulty__btn${difficulty === d ? ' setup-difficulty__btn--active' : ''}`}
+                    data-testid={`difficulty-${d}`}
                     onClick={() => setDifficulty(d)}
                   >
                     <span className="setup-difficulty__num">{d}</span>
@@ -131,6 +127,7 @@ export function GameSetupPage({ onNavigate }: GameSetupPageProps) {
             <h2 className="setup-section__label">Časovač</h2>
             <button
               className={`setup-timer-toggle${timerEnabled ? ' setup-timer-toggle--on' : ''}`}
+              data-testid="timer-toggle"
               onClick={() => setTimerEnabled(v => !v)}
               aria-pressed={timerEnabled}
             >
@@ -142,7 +139,7 @@ export function GameSetupPage({ onNavigate }: GameSetupPageProps) {
         </div>
 
         <div className="game-setup__footer">
-          <button className="btn btn--primary game-setup__start" onClick={handleStart}>
+          <button className="btn btn--primary game-setup__start" data-testid="start-btn" onClick={handleStart}>
             Hrať →
           </button>
         </div>

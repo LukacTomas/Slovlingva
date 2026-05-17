@@ -16,6 +16,7 @@ interface ProfileState {
   loadProfiles: () => Promise<void>
   createProfile: (name: string, avatarIndex: number, pin?: string) => Promise<IProfile>
   selectProfile: (id: string) => Promise<void>
+  logout: () => Promise<void>
   deleteProfile: (id: string) => Promise<void>
   updateActiveProfile: (patch: Partial<IProfile>) => Promise<void>
   upgradeSkill: (skill: SkillKey) => Promise<void>
@@ -50,6 +51,11 @@ export const useProfileStore = create<ProfileState>((set, get) => ({
     set(state => ({
       activeProfile: resolveActive(state.profiles, id),
     }))
+  },
+
+  logout: async () => {
+    await profileRepo.setActiveId(null)
+    set({ activeProfile: null })
   },
 
   deleteProfile: async (id) => {

@@ -1,4 +1,5 @@
 import { useState, useCallback, useEffect, useRef } from 'react'
+import { useNavigate } from '@tanstack/react-router'
 import './GamePage.css'
 import { useGame } from '../../hooks/useGame'
 import { useProfile } from '../../hooks/useProfile'
@@ -9,13 +10,9 @@ import { LevelBadge } from '../../components/LevelBadge/LevelBadge'
 import { TileBar } from '../../components/TileBar/TileBar'
 import { ExerciseCard } from '../../components/ExerciseCard/ExerciseCard'
 import type { CharacterOption, IExercise } from '../../../domain/entities/exercise.entity'
-import type { AppPage } from '../../../App'
 
-interface GamePageProps {
-  onNavigate: (page: AppPage) => void
-}
-
-export function GamePage({ onNavigate }: GamePageProps) {
+export function GamePage() {
+  const navigate = useNavigate()
   const {
     exercises,
     gameState,
@@ -78,7 +75,7 @@ export function GamePage({ onNavigate }: GamePageProps) {
         const config = gameState.config
         useSessionStore.getState().endRound({
           subject: 'slovencina',
-          routes: { setupPage: 'game-setup', gamePage: 'game' },
+          routes: { setupPage: '/game/slovencina/setup', gamePage: '/game/slovencina/play' },
           lastRoundResult: result,
           gameStatus: gameState.status,
           failedExercises: failedRecords,
@@ -89,7 +86,7 @@ export function GamePage({ onNavigate }: GamePageProps) {
           resetGame,
         })
 
-        onNavigate(failedRecords.length > 0 ? 'replay' : 'round-end')
+        navigate({ to: failedRecords.length > 0 ? '/game/slovencina/replay' : '/game/round-end' })
       })()
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -203,7 +200,7 @@ export function GamePage({ onNavigate }: GamePageProps) {
   const hasUnfilledBlanks = currentExercise.blanks.some(b => b.state === 'empty')
 
   return (
-    <div className="game-page">
+    <div className="game-page" data-testid="game-page">
       {/* Screen-reader live region for feedback */}
       <div
         role="status"
@@ -247,6 +244,7 @@ export function GamePage({ onNavigate }: GamePageProps) {
           {hasSkips && (
             <button
               className="game-skip-btn"
+              data-testid="skip-btn"
               onClick={handleSkip}
               disabled={advancing}
               aria-label={`Preskočiť príklad (zostáva ${gameState.skipsLeft})`}
@@ -289,6 +287,7 @@ export function GamePage({ onNavigate }: GamePageProps) {
             {hasHints && (
               <button
                 className="game-hint-btn"
+                data-testid="hint-btn"
                 onClick={handleHint}
                 disabled={advancing}
                 aria-label={`Nápoveda (zostáva ${gameState.hintsLeft})`}

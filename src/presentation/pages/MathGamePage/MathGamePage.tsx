@@ -1,4 +1,5 @@
 import { useState, useCallback, useEffect } from 'react'
+import { useNavigate } from '@tanstack/react-router'
 import './MathGamePage.css'
 import { useMathGame } from '../../hooks/useMathGame'
 import { useProfile } from '../../hooks/useProfile'
@@ -9,13 +10,9 @@ import { LevelBadge } from '../../components/LevelBadge/LevelBadge'
 import { MathExerciseCard } from '../../components/MathExerciseCard/MathExerciseCard'
 import { AnswerOptions } from '../../components/AnswerOptions/AnswerOptions'
 import { NumberInput } from '../../components/NumberInput/NumberInput'
-import type { AppPage } from '../../../App'
 
-interface MathGamePageProps {
-  onNavigate: (page: AppPage) => void
-}
-
-export function MathGamePage({ onNavigate }: MathGamePageProps) {
+export function MathGamePage() {
+  const navigate = useNavigate()
   const {
     exercises,
     gameState,
@@ -68,7 +65,7 @@ export function MathGamePage({ onNavigate }: MathGamePageProps) {
         const config = gameState.config
         useSessionStore.getState().endRound({
           subject: 'matematika',
-          routes: { setupPage: 'math-setup', gamePage: 'math-game' },
+          routes: { setupPage: '/game/matematika/setup', gamePage: '/game/matematika/play' },
           lastRoundResult: result,
           gameStatus: gameState.status,
           failedExercises: failedRecords,
@@ -79,7 +76,7 @@ export function MathGamePage({ onNavigate }: MathGamePageProps) {
           resetGame,
         })
 
-        onNavigate(failedRecords.length > 0 ? 'replay' : 'round-end')
+        navigate({ to: failedRecords.length > 0 ? '/game/matematika/replay' : '/game/round-end' })
       })()
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -159,7 +156,7 @@ export function MathGamePage({ onNavigate }: MathGamePageProps) {
   const isChoiceMode = gameState.config.answerMode === 'choice'
 
   return (
-    <div className="math-game">
+    <div className="math-game" data-testid="math-game-page">
       {/* Screen-reader live region */}
       <div role="status" aria-live="polite" aria-atomic="true" className="sr-only">
         {srMessage}
@@ -196,6 +193,7 @@ export function MathGamePage({ onNavigate }: MathGamePageProps) {
           {hasSkips && (
             <button
               className="game-skip-btn"
+              data-testid="skip-btn"
               onClick={handleSkip}
               disabled={advancing}
               aria-label={`Preskočiť príklad (zostáva ${gameState.skipsLeft})`}
@@ -236,6 +234,7 @@ export function MathGamePage({ onNavigate }: MathGamePageProps) {
           {hasHints && answerState === 'empty' && (
             <button
               className="game-hint-btn"
+              data-testid="hint-btn"
               onClick={handleHint}
               disabled={advancing}
               aria-label={`Nápoveda (zostáva ${gameState.hintsLeft})`}

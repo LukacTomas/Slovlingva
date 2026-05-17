@@ -7,7 +7,7 @@ interface HeartsProps {
 
 export function Hearts({ hearts, max }: HeartsProps) {
   return (
-    <div className="hearts" aria-label={`${hearts} of ${max} hearts remaining`}>
+    <div className="hearts" aria-label={`${hearts} of ${max} hearts remaining`} data-testid="hearts">
       {Array.from({ length: max }).map((_, i) => (
         <span
           key={i}

@@ -1,12 +1,9 @@
+import { useRef } from 'react'
+import { useNavigate } from '@tanstack/react-router'
 import './RoundEndPage.css'
 import { useSessionStore } from '../../store/sessionStore'
 import { useProfile } from '../../hooks/useProfile'
 import { AppToolbar } from '../../components/AppToolbar/AppToolbar'
-import type { AppPage } from '../../../App'
-
-interface RoundEndPageProps {
-  onNavigate: (page: AppPage) => void
-}
 
 function AccuracyStar({ accuracy }: { accuracy: number }) {
   const stars = accuracy >= 0.9 ? 3 : accuracy >= 0.6 ? 2 : 1
@@ -21,13 +18,15 @@ function AccuracyStar({ accuracy }: { accuracy: number }) {
   )
 }
 
-export function RoundEndPage({ onNavigate }: RoundEndPageProps) {
+export function RoundEndPage() {
+  const navigate = useNavigate()
   const snapshot = useSessionStore(s => s.snapshot)
   const clearSession = useSessionStore(s => s.clearSession)
   const { activeProfile } = useProfile()
+  const navigating = useRef(false)
 
   if (!snapshot || !activeProfile) {
-    onNavigate('profile-select')
+    if (!navigating.current) navigate({ to: '/login' })
     return null
   }
 
@@ -37,26 +36,29 @@ export function RoundEndPage({ onNavigate }: RoundEndPageProps) {
   const pct = Math.round(accuracy * 100)
 
   const handleBack = () => {
+    navigating.current = true
     resetGame()
     clearSession()
-    onNavigate(routes.setupPage)
+    navigate({ to: routes.setupPage, search: {} })
   }
 
   const handlePlayAgain = () => {
+    navigating.current = true
     restartRound()
     clearSession()
-    onNavigate(routes.gamePage)
+    navigate({ to: routes.gamePage, search: {} })
   }
 
   const handleSetup = () => {
+    navigating.current = true
     resetGame()
     clearSession()
-    onNavigate(routes.setupPage)
+    navigate({ to: routes.setupPage, search: {} })
   }
 
   return (
-    <div className="round-end-page">
-      <AppToolbar onBack={handleBack} onNavigate={onNavigate} />
+    <div className="round-end-page" data-testid="round-end-page">
+      <AppToolbar onBack={handleBack} />
 
       <main className="round-end__body anim-celebrate">
         {lastRoundResult.leveledUp && (
@@ -90,13 +92,13 @@ export function RoundEndPage({ onNavigate }: RoundEndPageProps) {
 
           <div className="round-end__stats">
             <div className="round-end__stat">
-              <span className="round-end__stat-value round-end__stat-value--xp">
+              <span className="round-end__stat-value round-end__stat-value--xp" data-testid="xp-earned">
                 +{lastRoundResult.xpEarned}
               </span>
               <span className="round-end__stat-label">XP</span>
             </div>
             <div className="round-end__stat">
-              <span className="round-end__stat-value">{pct}%</span>
+              <span className="round-end__stat-value" data-testid="accuracy-pct">{pct}%</span>
               <span className="round-end__stat-label">Správnosť</span>
             </div>
             <div className="round-end__stat">
@@ -108,10 +110,10 @@ export function RoundEndPage({ onNavigate }: RoundEndPageProps) {
           </div>
 
           <div className="round-end__actions">
-            <button className="btn btn--ghost" onClick={handleSetup}>
+            <button className="btn btn--ghost" data-testid="change-settings-btn" onClick={handleSetup}>
               Zmeniť nastavenie
             </button>
-            <button className="btn btn--primary" onClick={handlePlayAgain}>
+            <button className="btn btn--primary" data-testid="play-again-btn" onClick={handlePlayAgain}>
               Hrať znova →
             </button>
           </div>

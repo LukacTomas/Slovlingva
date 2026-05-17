@@ -22,6 +22,7 @@ export function AnswerOptions({
       className="answer-options"
       role="toolbar"
       aria-label="Možnosti odpovede"
+      data-testid="answer-options"
     >
       {options.map((opt, i) => {
         const isSelected = selectedAnswer === opt
@@ -38,6 +39,7 @@ export function AnswerOptions({
             onClick={() => onSelect(opt)}
             disabled={disabled}
             aria-label={`Odpoveď ${opt}`}
+            data-testid={`answer-${opt}`}
           >
             {opt}
           </button>

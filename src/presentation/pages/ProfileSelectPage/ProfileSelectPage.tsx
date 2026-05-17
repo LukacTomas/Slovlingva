@@ -1,16 +1,13 @@
 import { useState } from 'react'
+import { useNavigate } from '@tanstack/react-router'
 import './ProfileSelectPage.css'
 import { useProfile } from '../../hooks/useProfile'
 import { AVATARS } from '../../../utils/avatars'
 import { PinModal } from '../../components/PinModal/PinModal'
 import type { IProfile } from '../../../domain/entities/profile.entity'
-import type { AppPage } from '../../../App'
 
-interface ProfileSelectPageProps {
-  onNavigate: (page: AppPage) => void
-}
-
-export function ProfileSelectPage({ onNavigate }: ProfileSelectPageProps) {
+export function ProfileSelectPage() {
+  const navigate = useNavigate()
   const { profiles, selectProfile, deleteProfile } = useProfile()
 
   // PIN verification modal state
@@ -22,14 +19,14 @@ export function ProfileSelectPage({ onNavigate }: ProfileSelectPageProps) {
       return
     }
     await selectProfile(profile.id)
-    onNavigate('subject-select')
+    navigate({ to: '/dashboard' })
   }
 
   const handlePinSuccess = async () => {
     if (!pinProfile) return
     await selectProfile(pinProfile.id)
     setPinProfile(null)
-    onNavigate('subject-select')
+    navigate({ to: '/dashboard' })
   }
 
   const handleDelete = (e: React.MouseEvent, id: string) => {
@@ -40,7 +37,7 @@ export function ProfileSelectPage({ onNavigate }: ProfileSelectPageProps) {
   }
 
   return (
-    <div className="profile-select">
+    <div className="profile-select" data-testid="profile-select-page">
       <header className="profile-select__header">
         <h1 className="profile-select__title">Slovlingva</h1>
         <p className="profile-select__subtitle">Kto hrá?</p>
@@ -52,6 +49,7 @@ export function ProfileSelectPage({ onNavigate }: ProfileSelectPageProps) {
             <div key={p.id} className="profile-card">
               <button
                 className="profile-card__body"
+                data-testid="profile-card"
                 onClick={() => handleSelect(p)}
                 aria-label={`Vybrať profil ${p.name}`}
               >
@@ -68,6 +66,7 @@ export function ProfileSelectPage({ onNavigate }: ProfileSelectPageProps) {
               </button>
               <button
                 className="profile-card__delete"
+                data-testid="profile-delete-btn"
                 onClick={(e) => handleDelete(e, p.id)}
                 aria-label={`Odstrániť profil ${p.name}`}
               >
@@ -78,7 +77,8 @@ export function ProfileSelectPage({ onNavigate }: ProfileSelectPageProps) {
 
           <button
             className="profile-card profile-card--new"
-            onClick={() => onNavigate('create-profile')}
+            data-testid="new-player-btn"
+            onClick={() => navigate({ to: '/register' })}
             aria-label="Vytvoriť nový profil"
           >
             <span className="profile-card__plus">+</span>

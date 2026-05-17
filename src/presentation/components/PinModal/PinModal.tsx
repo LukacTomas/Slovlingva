@@ -34,7 +34,7 @@ export function PinModal({ profileName, avatar, pinHash, onSuccess, onCancel }: 
   }
 
   return (
-    <div className="pin-modal-backdrop" onClick={handleBackdropClick} role="dialog" aria-modal="true" aria-label="Zadaj PIN">
+    <div className="pin-modal-backdrop" onClick={handleBackdropClick} role="dialog" aria-modal="true" aria-label="Zadaj PIN" data-testid="pin-modal">
       <div className="pin-modal">
         <div className="pin-modal__avatar">{avatar}</div>
         <h2 className="pin-modal__title">{profileName}</h2>
@@ -45,6 +45,7 @@ export function PinModal({ profileName, avatar, pinHash, onSuccess, onCancel }: 
         <button
           className="pin-modal__cancel btn btn--ghost"
           onClick={onCancel}
+          data-testid="pin-cancel"
         >
           Zrušiť
         </button>

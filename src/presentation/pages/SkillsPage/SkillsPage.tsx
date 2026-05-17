@@ -1,19 +1,15 @@
+import { useNavigate } from '@tanstack/react-router'
 import './SkillsPage.css'
 import { useProfile } from '../../hooks/useProfile'
 import { AppToolbar } from '../../components/AppToolbar/AppToolbar'
 import { SKILL_META, SKILL_CAPS, SKILL_SP_COST } from '../../../domain/entities/skill.entity'
 import type { SkillKey } from '../../../domain/entities/skill.entity'
-import type { AppPage } from '../../../App'
 
-interface SkillsPageProps {
-  onNavigate: (page: AppPage) => void
-}
-
-export function SkillsPage({ onNavigate }: SkillsPageProps) {
+export function SkillsPage() {
+  const navigate = useNavigate()
   const { activeProfile, upgradeSkill } = useProfile()
 
   if (!activeProfile) {
-    onNavigate('profile-select')
     return null
   }
 
@@ -23,13 +19,13 @@ export function SkillsPage({ onNavigate }: SkillsPageProps) {
   )
 
   return (
-    <main className="skills-page">
-      <AppToolbar onBack={() => onNavigate('subject-select')} onNavigate={onNavigate} />
+    <main className="skills-page" data-testid="skills-page">
+      <AppToolbar onBack={() => navigate({ to: '/dashboard' })} />
 
       <div className="skills-page__body">
         <header className="skills-page__header">
           <h1 className="skills-page__title">Schopnosti</h1>
-          <div className="skills-page__sp-balance" aria-label={`${sp} voľných bodov dovedností`}>
+          <div className="skills-page__sp-balance" data-testid="sp-balance" aria-label={`${sp} voľných bodov dovedností`}>
             <span className="skills-page__sp-icon">✦</span>
             <span className="skills-page__sp-value">{sp}</span>
             <span className="skills-page__sp-label">bodov dovedností</span>

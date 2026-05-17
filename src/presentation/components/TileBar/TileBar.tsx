@@ -71,6 +71,7 @@ function Tile({ char, index, disabled, tileRefs, onTileClick }: TileProps) {
         e.dataTransfer.effectAllowed = 'copy'
       }}
       onClick={() => onTileClick(char)}
+      data-testid={`tile-${char}`}
     >
       {char}
     </button>
@@ -84,6 +85,7 @@ export function TileBar({ onTileClick, disabled = false }: TileBarProps) {
   return (
     <aside
       className="tile-bar"
+      data-testid="tile-bar"
       role="toolbar"
       aria-label="Písmená na výber"
       aria-orientation="vertical"

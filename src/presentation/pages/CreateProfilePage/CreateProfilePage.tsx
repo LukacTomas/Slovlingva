@@ -1,17 +1,14 @@
 import { useState } from 'react'
+import { useNavigate } from '@tanstack/react-router'
 import './CreateProfilePage.css'
 import { useProfile } from '../../hooks/useProfile'
 import { AVATARS } from '../../../utils/avatars'
 import { PinInput } from '../../components/PinInput/PinInput'
-import type { AppPage } from '../../../App'
-
-interface CreateProfilePageProps {
-  onNavigate: (page: AppPage) => void
-}
 
 type Step = 'name' | 'pin' | 'pin-confirm'
 
-export function CreateProfilePage({ onNavigate }: CreateProfilePageProps) {
+export function CreateProfilePage() {
+  const navigate = useNavigate()
   const { createProfile, selectProfile } = useProfile()
 
   const [step, setStep] = useState<Step>('name')
@@ -41,15 +38,16 @@ export function CreateProfilePage({ onNavigate }: CreateProfilePageProps) {
     }
     const profile = await createProfile(name.trim(), avatarIndex, pin)
     await selectProfile(profile.id)
-    onNavigate('subject-select')
+    navigate({ to: '/dashboard' })
   }
 
   return (
-    <div className="create-profile">
+    <div className="create-profile" data-testid="create-profile-page">
       <header className="create-profile__header">
         <button
           className="create-profile__back"
-          onClick={() => step === 'name' ? onNavigate('profile-select') : setStep(step === 'pin-confirm' ? 'pin' : 'name')}
+          data-testid="create-profile-back"
+          onClick={() => step === 'name' ? navigate({ to: '/login' }) : setStep(step === 'pin-confirm' ? 'pin' : 'name')}
           aria-label="Späť"
         >
           &#8592;
@@ -65,6 +63,7 @@ export function CreateProfilePage({ onNavigate }: CreateProfilePageProps) {
                 <button
                   key={idx}
                   className={`create-profile__avatar-btn${avatarIndex === idx ? ' create-profile__avatar-btn--selected' : ''}`}
+                  data-testid="avatar-btn"
                   onClick={() => setAvatarIndex(idx)}
                   aria-label={`Vybrať avatar ${emoji}`}
                   aria-pressed={avatarIndex === idx}
@@ -78,6 +77,7 @@ export function CreateProfilePage({ onNavigate }: CreateProfilePageProps) {
               <input
                 className={`create-profile__input${nameError ? ' create-profile__input--error' : ''}`}
                 type="text"
+                data-testid="name-input"
                 placeholder="Tvoje meno"
                 value={name}
                 maxLength={20}
@@ -89,14 +89,14 @@ export function CreateProfilePage({ onNavigate }: CreateProfilePageProps) {
               {nameError && <p className="create-profile__error">{nameError}</p>}
             </div>
 
-            <button className="btn btn--primary create-profile__next" onClick={handleNameSubmit}>
+            <button className="btn btn--primary create-profile__next" data-testid="next-btn" onClick={handleNameSubmit}>
               Ďalej
             </button>
           </div>
         )}
 
         {step === 'pin' && (
-          <div className="create-profile__step anim-fade-in">
+          <div className="create-profile__step anim-fade-in" data-testid="step-pin">
             <div className="create-profile__avatar-preview">
               {AVATARS[avatarIndex % AVATARS.length]}
             </div>
@@ -107,7 +107,7 @@ export function CreateProfilePage({ onNavigate }: CreateProfilePageProps) {
         )}
 
         {step === 'pin-confirm' && (
-          <div className="create-profile__step anim-fade-in">
+          <div className="create-profile__step anim-fade-in" data-testid="step-pin-confirm">
             <div className="create-profile__avatar-preview">
               {AVATARS[avatarIndex % AVATARS.length]}
             </div>

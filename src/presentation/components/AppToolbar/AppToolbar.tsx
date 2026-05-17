@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef } from 'react'
+import { useNavigate } from '@tanstack/react-router'
 import './AppToolbar.css'
 import { useProfile } from '../../hooks/useProfile'
 import { XPBar } from '../XPBar/XPBar'
@@ -6,7 +7,6 @@ import { LevelBadge } from '../LevelBadge/LevelBadge'
 import { PinManageModal } from '../PinManageModal/PinManageModal'
 import { avatarEmoji } from '../../../utils/avatars'
 import { SKILL_CAPS } from '../../../domain/entities/skill.entity'
-import type { AppPage } from '../../../App'
 import type { ISkills, SkillKey } from '../../../domain/entities/skill.entity'
 
 function allSkillsMaxed(skills: ISkills): boolean {
@@ -15,10 +15,10 @@ function allSkillsMaxed(skills: ISkills): boolean {
 
 interface AppToolbarProps {
   onBack: () => void
-  onNavigate: (page: AppPage) => void
 }
 
-export function AppToolbar({ onBack, onNavigate }: AppToolbarProps) {
+export function AppToolbar({ onBack }: AppToolbarProps) {
+  const navigate = useNavigate()
   const { activeProfile } = useProfile()
   const [menuOpen, setMenuOpen] = useState(false)
   const [showPinModal, setShowPinModal] = useState(false)
@@ -49,11 +49,12 @@ export function AppToolbar({ onBack, onNavigate }: AppToolbarProps) {
   const spendable = sp > 0 && !allSkillsMaxed(activeProfile.skills)
 
   return (
-    <header className="app-toolbar">
+    <header className="app-toolbar" data-testid="app-toolbar">
       <button
         className="app-toolbar__back"
         onClick={onBack}
         aria-label="Späť"
+        data-testid="toolbar-back"
       >
         &#8592;
       </button>
@@ -70,6 +71,7 @@ export function AppToolbar({ onBack, onNavigate }: AppToolbarProps) {
           aria-expanded={menuOpen}
           aria-haspopup="true"
           aria-label="Menu"
+          data-testid="toolbar-avatar"
         >
           {avatarEmoji(activeProfile.avatarIndex)}
           <span className="app-toolbar__caret">{menuOpen ? '▲' : '▼'}</span>
@@ -77,7 +79,7 @@ export function AppToolbar({ onBack, onNavigate }: AppToolbarProps) {
         </button>
 
         {menuOpen && (
-          <div className="app-toolbar__dropdown" role="menu">
+          <div className="app-toolbar__dropdown" role="menu" data-testid="toolbar-menu">
             <div className="app-toolbar__dropdown-header">
               <span className="app-toolbar__dropdown-name">{activeProfile.name}</span>
               {activeProfile.streak > 1 && (
@@ -90,7 +92,8 @@ export function AppToolbar({ onBack, onNavigate }: AppToolbarProps) {
             <button
               className="app-toolbar__dropdown-item"
               role="menuitem"
-              onClick={() => { setMenuOpen(false); onNavigate('skills') }}
+              onClick={() => { setMenuOpen(false); navigate({ to: '/skills' }) }}
+              data-testid="menu-skills"
             >
               ✦ Schopnosti
               {spendable && (
@@ -103,7 +106,8 @@ export function AppToolbar({ onBack, onNavigate }: AppToolbarProps) {
             <button
               className="app-toolbar__dropdown-item"
               role="menuitem"
-              onClick={() => { setMenuOpen(false); onNavigate('profile-select') }}
+              onClick={() => { setMenuOpen(false); navigate({ to: '/login' }) }}
+              data-testid="menu-logout"
             >
               🚪 Odhlásiť sa
             </button>
@@ -112,6 +116,7 @@ export function AppToolbar({ onBack, onNavigate }: AppToolbarProps) {
               className="app-toolbar__dropdown-item"
               role="menuitem"
               onClick={() => { setMenuOpen(false); setShowPinModal(true) }}
+              data-testid="menu-pin"
             >
               🔒 {activeProfile.pinHash ? 'Zmeniť PIN' : 'Nastaviť PIN'}
             </button>

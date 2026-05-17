@@ -82,7 +82,7 @@ export function PinInput({ onComplete, error, disabled = false, autoFocus = true
   }
 
   return (
-    <div className="pin-input">
+    <div className="pin-input" data-testid="pin-input">
       <div className="pin-input__digits" role="group" aria-label="Zadaj PIN">
         {digits.map((digit, i) => (
           <input
@@ -100,11 +100,12 @@ export function PinInput({ onComplete, error, disabled = false, autoFocus = true
             disabled={disabled}
             autoComplete="off"
             aria-label={`PIN číslica ${i + 1}`}
+            data-testid={`pin-digit-${i}`}
           />
         ))}
       </div>
       {error && (
-        <p className="pin-input__error" role="alert">{error}</p>
+        <p className="pin-input__error" role="alert" data-testid="pin-error">{error}</p>
       )}
     </div>
   )

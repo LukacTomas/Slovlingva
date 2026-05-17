@@ -1,20 +1,17 @@
 import { useState, useCallback } from 'react'
+import { useNavigate } from '@tanstack/react-router'
 import './ReplayPage.css'
 import { useSessionStore } from '../../store/sessionStore'
 import { getRenderer } from '../../registry/exerciseRenderers'
-import type { AppPage } from '../../../App'
 
-interface ReplayPageProps {
-  onNavigate: (page: AppPage) => void
-}
-
-export function ReplayPage({ onNavigate }: ReplayPageProps) {
+export function ReplayPage() {
+  const navigate = useNavigate()
   const snapshot = useSessionStore(s => s.snapshot)
   const [currentIndex, setCurrentIndex] = useState(0)
   const [srMessage, setSrMessage] = useState('')
 
   if (!snapshot || snapshot.failedExercises.length === 0) {
-    onNavigate('round-end')
+    navigate({ to: '/game/round-end' })
     return null
   }
 
@@ -23,7 +20,7 @@ export function ReplayPage({ onNavigate }: ReplayPageProps) {
 
   if (!Renderer) {
     // Fallback: skip replay if no renderer registered
-    onNavigate('round-end')
+    navigate({ to: '/game/round-end' })
     return null
   }
 
@@ -34,12 +31,12 @@ export function ReplayPage({ onNavigate }: ReplayPageProps) {
     const nextIndex = currentIndex + 1
     if (nextIndex >= totalReplay) {
       // All replays done — go to round end
-      onNavigate('round-end')
+      navigate({ to: '/game/round-end' })
     } else {
       setCurrentIndex(nextIndex)
       setSrMessage(`Správne! Ďalší príklad.`)
     }
-  }, [currentIndex, totalReplay, onNavigate])
+  }, [currentIndex, totalReplay, navigate])
 
   const handleWrong = useCallback(() => {
     setSrMessage('Nesprávne. Skús znova.')
@@ -54,7 +51,7 @@ export function ReplayPage({ onNavigate }: ReplayPageProps) {
   }
 
   return (
-    <div className="replay-page">
+    <div className="replay-page" data-testid="replay-page">
       {/* Screen-reader live region */}
       <div role="status" aria-live="polite" aria-atomic="true" className="sr-only">
         {srMessage}
