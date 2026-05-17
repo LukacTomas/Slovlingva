@@ -1,0 +1,58 @@
+.pin-input {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+}
+
+.pin-input__digits {
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+}
+
+.pin-input__digit {
+  width: 48px;
+  height: 56px;
+  border: 2px solid var(--color-border);
+  border-radius: var(--radius-md, 12px);
+  background: var(--color-bg-panel);
+  font-size: var(--font-size-xl, 1.5rem);
+  font-weight: 700;
+  text-align: center;
+  color: var(--color-text);
+  outline: none;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+  -webkit-text-security: disc;
+}
+
+.pin-input__digit:focus {
+  border-color: var(--color-primary, #6c5ce7);
+  box-shadow: 0 0 0 3px rgba(108, 92, 231, 0.2);
+}
+
+.pin-input__digit--error {
+  border-color: var(--color-wrong);
+  animation: pin-shake 0.4s ease;
+}
+
+.pin-input__digit:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.pin-input__error {
+  color: var(--color-danger, var(--color-wrong));
+  font-size: var(--font-size-sm, 0.85rem);
+  font-weight: 600;
+  margin: 0;
+  text-align: center;
+}
+
+@keyframes pin-shake {
+  0%, 100% { transform: translateX(0); }
+  20% { transform: translateX(-6px); }
+  40% { transform: translateX(6px); }
+  60% { transform: translateX(-4px); }
+  80% { transform: translateX(4px); }
+}

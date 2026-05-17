@@ -2,6 +2,8 @@ import { useState } from 'react'
 import './ProfileSelectPage.css'
 import { useProfile } from '../../hooks/useProfile'
 import { AVATARS } from '../../../utils/avatars'
+import { PinModal } from '../../components/PinModal/PinModal'
+import type { IProfile } from '../../../domain/entities/profile.entity'
 import type { AppPage } from '../../../App'
 
 interface ProfileSelectPageProps {
@@ -9,23 +11,24 @@ interface ProfileSelectPageProps {
 }
 
 export function ProfileSelectPage({ onNavigate }: ProfileSelectPageProps) {
-  const { profiles, createProfile, selectProfile, deleteProfile } = useProfile()
-  const [showForm, setShowForm] = useState(false)
-  const [name, setName] = useState('')
-  const [avatarIndex, setAvatarIndex] = useState(0)
-  const [nameError, setNameError] = useState('')
+  const { profiles, selectProfile, deleteProfile } = useProfile()
 
-  const handleSelect = async (id: string) => {
-    await selectProfile(id)
+  // PIN verification modal state
+  const [pinProfile, setPinProfile] = useState<IProfile | null>(null)
+
+  const handleSelect = async (profile: IProfile) => {
+    if (profile.pinHash) {
+      setPinProfile(profile)
+      return
+    }
+    await selectProfile(profile.id)
     onNavigate('subject-select')
   }
 
-  const handleCreate = async () => {
-    const trimmed = name.trim()
-    if (!trimmed) { setNameError('Zadaj meno'); return }
-    if (trimmed.length > 20) { setNameError('Meno je príliš dlhé'); return }
-    const profile = await createProfile(trimmed, avatarIndex)
-    await selectProfile(profile.id)
+  const handlePinSuccess = async () => {
+    if (!pinProfile) return
+    await selectProfile(pinProfile.id)
+    setPinProfile(null)
     onNavigate('subject-select')
   }
 
@@ -46,12 +49,10 @@ export function ProfileSelectPage({ onNavigate }: ProfileSelectPageProps) {
       <main className="profile-select__main">
         <div className="profile-select__grid">
           {profiles.map(p => (
-            // Outer div — not interactive, holds layout + hover / focus-within styles
             <div key={p.id} className="profile-card">
-              {/* Primary action: select profile */}
               <button
                 className="profile-card__body"
-                onClick={() => handleSelect(p.id)}
+                onClick={() => handleSelect(p)}
                 aria-label={`Vybrať profil ${p.name}`}
               >
                 <span className="profile-card__avatar">{AVATARS[p.avatarIndex % AVATARS.length]}</span>
@@ -61,8 +62,10 @@ export function ProfileSelectPage({ onNavigate }: ProfileSelectPageProps) {
                 {p.streak > 0 && (
                   <span className="profile-card__streak">🔥 {p.streak}</span>
                 )}
+                {p.pinHash && (
+                  <span className="profile-card__lock" aria-label="Chránené PINom">🔒</span>
+                )}
               </button>
-              {/* Secondary action: delete — separate button, never nested */}
               <button
                 className="profile-card__delete"
                 onClick={(e) => handleDelete(e, p.id)}
@@ -73,62 +76,27 @@ export function ProfileSelectPage({ onNavigate }: ProfileSelectPageProps) {
             </div>
           ))}
 
-          {!showForm && (
-            <button
-              className="profile-card profile-card--new"
-              onClick={() => setShowForm(true)}
-              aria-label="Vytvoriť nový profil"
-            >
-              <span className="profile-card__plus">+</span>
-              <span className="profile-card__name">Nový hráč</span>
-            </button>
-          )}
+          <button
+            className="profile-card profile-card--new"
+            onClick={() => onNavigate('create-profile')}
+            aria-label="Vytvoriť nový profil"
+          >
+            <span className="profile-card__plus">+</span>
+            <span className="profile-card__name">Nový hráč</span>
+          </button>
         </div>
-
-        {showForm && (
-          <div className="profile-form anim-fade-in">
-            <h2 className="profile-form__title">Nový hráč</h2>
-
-            <div className="profile-form__avatar-grid">
-              {AVATARS.map((emoji, idx) => (
-                <button
-                  key={idx}
-                  className={`profile-form__avatar-btn${avatarIndex === idx ? ' profile-form__avatar-btn--selected' : ''}`}
-                  onClick={() => setAvatarIndex(idx)}
-                  aria-label={`Vybrať avatar ${emoji}`}
-                  aria-pressed={avatarIndex === idx}
-                >
-                  {emoji}
-                </button>
-              ))}
-            </div>
-
-            <div className="profile-form__field">
-              <input
-                className={`profile-form__input${nameError ? ' profile-form__input--error' : ''}`}
-                type="text"
-                placeholder="Tvoje meno"
-                value={name}
-                maxLength={20}
-                autoFocus
-                onChange={(e) => { setName(e.target.value); setNameError('') }}
-                onKeyDown={(e) => { if (e.key === 'Enter') handleCreate() }}
-                aria-label="Meno hráča"
-              />
-              {nameError && <p className="profile-form__error">{nameError}</p>}
-            </div>
-
-            <div className="profile-form__actions">
-              <button className="btn btn--ghost" onClick={() => { setShowForm(false); setName(''); setNameError('') }}>
-                Zrušiť
-              </button>
-              <button className="btn btn--primary" onClick={handleCreate}>
-                Vytvoriť
-              </button>
-            </div>
-          </div>
-        )}
       </main>
+
+      {/* PIN verification modal */}
+      {pinProfile && (
+        <PinModal
+          profileName={pinProfile.name}
+          avatar={AVATARS[pinProfile.avatarIndex % AVATARS.length]}
+          pinHash={pinProfile.pinHash!}
+          onSuccess={handlePinSuccess}
+          onCancel={() => setPinProfile(null)}
+        />
+      )}
     </div>
   )
 }

@@ -3,6 +3,7 @@ import './AppToolbar.css'
 import { useProfile } from '../../hooks/useProfile'
 import { XPBar } from '../XPBar/XPBar'
 import { LevelBadge } from '../LevelBadge/LevelBadge'
+import { PinManageModal } from '../PinManageModal/PinManageModal'
 import { avatarEmoji } from '../../../utils/avatars'
 import { SKILL_CAPS } from '../../../domain/entities/skill.entity'
 import type { AppPage } from '../../../App'
@@ -20,6 +21,7 @@ interface AppToolbarProps {
 export function AppToolbar({ onBack, onNavigate }: AppToolbarProps) {
   const { activeProfile } = useProfile()
   const [menuOpen, setMenuOpen] = useState(false)
+  const [showPinModal, setShowPinModal] = useState(false)
   const menuRef = useRef<HTMLDivElement>(null)
 
   // Close on click outside
@@ -103,11 +105,23 @@ export function AppToolbar({ onBack, onNavigate }: AppToolbarProps) {
               role="menuitem"
               onClick={() => { setMenuOpen(false); onNavigate('profile-select') }}
             >
-              👤 Zmeniť hráča
+              🚪 Odhlásiť sa
+            </button>
+
+            <button
+              className="app-toolbar__dropdown-item"
+              role="menuitem"
+              onClick={() => { setMenuOpen(false); setShowPinModal(true) }}
+            >
+              🔒 {activeProfile.pinHash ? 'Zmeniť PIN' : 'Nastaviť PIN'}
             </button>
           </div>
         )}
       </div>
+
+      {showPinModal && (
+        <PinManageModal onClose={() => setShowPinModal(false)} />
+      )}
     </header>
   )
 }

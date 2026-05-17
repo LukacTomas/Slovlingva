@@ -2,6 +2,7 @@ import { describe, it, expect, beforeEach } from 'vitest'
 import { CreateProfileUseCase } from './CreateProfileUseCase'
 import { ProfileRepository } from '../../infrastructure/repositories/ProfileRepository'
 import { LocalStorageAdapter } from '../../infrastructure/storage/LocalStorageAdapter'
+import { verifyPin } from '../../utils/pinUtils'
 
 describe('CreateProfileUseCase', () => {
   let useCase: CreateProfileUseCase
@@ -50,5 +51,20 @@ describe('CreateProfileUseCase', () => {
     await useCase.execute('Alice', 0)
     const repo = new ProfileRepository(new LocalStorageAdapter())
     expect(await repo.findAll()).toHaveLength(1)
+  })
+
+  it('creates profile without PIN when pin is omitted', async () => {
+    const p = await useCase.execute('Alice', 0)
+    expect(p.pinHash).toBeUndefined()
+  })
+
+  it('creates profile with PIN hash when pin is provided', async () => {
+    const p = await useCase.execute('Alice', 0, '1234')
+    expect(p.pinHash).toBeDefined()
+    expect(verifyPin('1234', p.pinHash!)).toBe(true)
+  })
+
+  it('rejects invalid PIN format', async () => {
+    await expect(useCase.execute('Alice', 0, 'abc')).rejects.toThrow(/4 digits/)
   })
 })

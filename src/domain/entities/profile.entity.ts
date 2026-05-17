@@ -14,6 +14,7 @@ export interface IProfile {
   streak: number              // consecutive days played
   lastPlayedDate: string      // ISO date string YYYY-MM-DD
   createdAt: string           // ISO timestamp
+  pinHash?: string            // SHA-256 hash of optional 4-digit PIN; undefined = no PIN
 }
 
 export interface IProfileStore {

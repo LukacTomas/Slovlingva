@@ -1,0 +1,64 @@
+.pin-manage-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(4px);
+  animation: pin-manage-fade-in 0.2s ease;
+}
+
+.pin-manage {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+  background: var(--color-bg-card);
+  border: 2px solid var(--color-border);
+  border-radius: var(--radius-lg, 20px);
+  padding: 32px 28px;
+  min-width: 280px;
+  max-width: 340px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+  animation: pin-manage-slide-up 0.25s ease;
+}
+
+.pin-manage__title {
+  font-size: var(--font-size-lg, 1.25rem);
+  font-weight: 800;
+  color: var(--color-text);
+  margin: 0;
+}
+
+.pin-manage__subtitle {
+  font-size: var(--font-size-sm, 0.85rem);
+  color: var(--color-text-muted);
+  font-weight: 600;
+  margin: 0;
+}
+
+.pin-manage__actions {
+  display: flex;
+  gap: 8px;
+}
+
+.pin-manage__cancel {
+  margin-top: 4px;
+}
+
+.btn--sm {
+  padding: var(--space-sm, 6px) var(--space-md, 12px);
+  font-size: var(--font-size-sm, 0.85rem);
+}
+
+@keyframes pin-manage-fade-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes pin-manage-slide-up {
+  from { transform: translateY(20px); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
+}

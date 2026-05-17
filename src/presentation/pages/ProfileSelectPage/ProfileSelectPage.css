@@ -129,6 +129,11 @@
   color: var(--color-warning);
 }
 
+.profile-card__lock {
+  font-size: var(--font-size-xs);
+  opacity: 0.6;
+}
+
 .profile-card__delete {
   position: absolute;
   top: var(--space-xs);
@@ -155,96 +160,6 @@
 
 .profile-card__delete:hover {
   color: var(--color-wrong);
-}
-
-/* ─── New profile form ────────────────────────────────────────────────────── */
-.profile-form {
-  background: var(--color-bg-card);
-  border: 2px solid var(--color-border);
-  border-radius: var(--radius-lg);
-  padding: var(--space-xl);
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-lg);
-  align-items: center;
-  max-width: 480px;
-  width: 100%;
-  box-shadow: var(--shadow-card);
-}
-
-.profile-form__title {
-  font-size: var(--font-size-lg);
-  font-weight: 800;
-  color: var(--color-text);
-}
-
-.profile-form__avatar-grid {
-  display: flex;
-  flex-wrap: wrap;
-  gap: var(--space-sm);
-  justify-content: center;
-}
-
-.profile-form__avatar-btn {
-  width: 52px;
-  height: 52px;
-  font-size: 28px;
-  border-radius: var(--radius-sm);
-  background: var(--color-bg-panel);
-  border: 2px solid transparent;
-  cursor: pointer;
-  transition: border-color var(--transition-fast), transform var(--transition-fast);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.profile-form__avatar-btn:hover {
-  transform: scale(1.15);
-}
-
-.profile-form__avatar-btn--selected {
-  border-color: var(--color-primary);
-  background: rgba(76, 175, 80, 0.15);
-}
-
-.profile-form__field {
-  width: 100%;
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-xs);
-}
-
-.profile-form__input {
-  width: 100%;
-  padding: var(--space-md) var(--space-lg);
-  background: var(--color-bg-panel);
-  border: 2px solid var(--color-border);
-  border-radius: var(--radius-md);
-  color: var(--color-text);
-  font-size: var(--font-size-md);
-  font-weight: 700;
-  outline: none;
-  transition: border-color var(--transition-fast);
-}
-
-.profile-form__input:focus {
-  border-color: var(--color-primary);
-}
-
-.profile-form__input--error {
-  border-color: var(--color-wrong);
-}
-
-.profile-form__error {
-  font-size: var(--font-size-sm);
-  color: var(--color-wrong);
-  font-weight: 700;
-}
-
-.profile-form__actions {
-  display: flex;
-  gap: var(--space-md);
 }
 
 /* ─── Shared button styles ───────────────────────────────────────────────── */
@@ -296,7 +211,6 @@
   .profile-select__grid {
     gap: var(--space-md);
     width: 100%;
-    /* Two columns, full-width on phone */
     display: grid;
     grid-template-columns: repeat(2, 1fr);
     justify-items: center;
@@ -316,20 +230,5 @@
   /* Always show delete on touch (no hover state on touch devices) */
   .profile-card__delete {
     opacity: 1;
-  }
-
-  .profile-form {
-    padding: var(--space-lg);
-  }
-
-  .profile-form__actions {
-    width: 100%;
-    flex-direction: column-reverse;
-  }
-
-  .profile-form__actions .btn {
-    width: 100%;
-    justify-content: center;
-    text-align: center;
   }
 }

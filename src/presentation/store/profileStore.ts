@@ -6,6 +6,7 @@ import { CreateProfileUseCase } from '../../application/usecases/CreateProfileUs
 import { SelectProfileUseCase } from '../../application/usecases/SelectProfileUseCase'
 import { DeleteProfileUseCase } from '../../application/usecases/DeleteProfileUseCase'
 import { UpgradeSkillUseCase } from '../../application/usecases/UpgradeSkillUseCase'
+import { SetPinUseCase } from '../../application/usecases/SetPinUseCase'
 
 interface ProfileState {
   profiles: IProfile[]
@@ -13,11 +14,12 @@ interface ProfileState {
 
   // Actions
   loadProfiles: () => Promise<void>
-  createProfile: (name: string, avatarIndex: number) => Promise<IProfile>
+  createProfile: (name: string, avatarIndex: number, pin?: string) => Promise<IProfile>
   selectProfile: (id: string) => Promise<void>
   deleteProfile: (id: string) => Promise<void>
   updateActiveProfile: (patch: Partial<IProfile>) => Promise<void>
   upgradeSkill: (skill: SkillKey) => Promise<void>
+  setPin: (profileId: string, currentPin?: string, newPin?: string | null) => Promise<void>
 }
 
 function resolveActive(profiles: IProfile[], activeId: string | null): IProfile | null {
@@ -35,8 +37,8 @@ export const useProfileStore = create<ProfileState>((set, get) => ({
     set({ profiles, activeProfile: resolveActive(profiles, activeId) })
   },
 
-  createProfile: async (name, avatarIndex) => {
-    const profile = await new CreateProfileUseCase(profileRepo).execute(name, avatarIndex)
+  createProfile: async (name, avatarIndex, pin?) => {
+    const profile = await new CreateProfileUseCase(profileRepo).execute(name, avatarIndex, pin)
     set(state => ({
       profiles: [...state.profiles, profile],
     }))
@@ -82,5 +84,13 @@ export const useProfileStore = create<ProfileState>((set, get) => ({
     } catch {
       // Not enough SP or at cap — silently ignore; UI should guard
     }
+  },
+
+  setPin: async (profileId, currentPin?, newPin?) => {
+    const updated = await new SetPinUseCase(profileRepo).execute({ profileId, currentPin, newPin })
+    set(state => ({
+      activeProfile: state.activeProfile?.id === updated.id ? updated : state.activeProfile,
+      profiles: state.profiles.map(p => p.id === updated.id ? updated : p),
+    }))
   },
 }))

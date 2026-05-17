@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import { useGame } from './presentation/hooks/useGame'
 import { useProfile } from './presentation/hooks/useProfile'
 import { ProfileSelectPage } from './presentation/pages/ProfileSelectPage/ProfileSelectPage'
+import { CreateProfilePage } from './presentation/pages/CreateProfilePage/CreateProfilePage'
 import { SubjectSelectPage } from './presentation/pages/SubjectSelectPage/SubjectSelectPage'
 import { GameSetupPage } from './presentation/pages/GameSetupPage/GameSetupPage'
 import { GamePage } from './presentation/pages/GamePage/GamePage'
@@ -18,6 +19,7 @@ registerAllRenderers()
 export type AppPage =
   | 'loading'
   | 'profile-select'
+  | 'create-profile'
   | 'subject-select'
   | 'game-setup'
   | 'game'
@@ -63,6 +65,8 @@ function App() {
       return <LoadingScreen />
     case 'profile-select':
       return <ProfileSelectPage onNavigate={setPage} />
+    case 'create-profile':
+      return <CreateProfilePage onNavigate={setPage} />
     case 'subject-select':
       return <SubjectSelectPage onNavigate={setPage} />
     case 'game-setup':
