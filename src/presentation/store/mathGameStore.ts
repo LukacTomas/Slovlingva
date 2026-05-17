@@ -2,14 +2,10 @@ import { create } from 'zustand'
 import type { IMathExercise, IMathGameConfig, IMathGameState } from '../../domain/entities/math-exercise.entity'
 import type { IRoundResult } from '../../domain/entities/game.entity'
 import type { FailReason, IFailedExerciseRecord } from '../../domain/entities/game-session.entity'
-import { LocalStorageAdapter } from '../../infrastructure/storage/LocalStorageAdapter'
-import { ProfileRepository } from '../../infrastructure/repositories/ProfileRepository'
+import { profileRepo } from '../../infrastructure/container'
 import { StartMathRoundUseCase } from '../../application/usecases/StartMathRoundUseCase'
 import { SubmitMathAnswerUseCase } from '../../application/usecases/SubmitMathAnswerUseCase'
 import { FinaliseRoundUseCase } from '../../application/usecases/FinaliseRoundUseCase'
-
-const storage = new LocalStorageAdapter()
-const profileRepo = new ProfileRepository(storage)
 
 /** Helper: record a failure for the current exercise if not already recorded. */
 function recordFailure(
@@ -37,7 +33,7 @@ interface MathGameStoreState {
   submitAnswer: (exerciseId: string, answer: number) => { correct: boolean }
   loseHeart: () => void
   nextExercise: () => void
-  finaliseRound: (timerBonus: boolean) => IRoundResult
+  finaliseRound: (timerBonus: boolean) => Promise<IRoundResult>
   resetGame: () => void
   tick: () => void
   applyHint: (exerciseId: string) => void
@@ -121,7 +117,7 @@ export const useMathGameStore = create<MathGameStoreState>((set, get) => ({
     })
   },
 
-  finaliseRound: (timerBonus) => {
+  finaliseRound: async (timerBonus) => {
     const { gameState, exercises, failedIndices } = get()
     if (!gameState) throw new Error('No active math game state')
 
@@ -129,7 +125,7 @@ export const useMathGameStore = create<MathGameStoreState>((set, get) => ({
     const totalExercises = exercises.length
     const correctCount = totalExercises - failedIndices.size
 
-    const result = new FinaliseRoundUseCase(profileRepo).execute({
+    const result = await new FinaliseRoundUseCase(profileRepo).execute({
       correctCount,
       totalBlanks: totalExercises,
       timerBonus,

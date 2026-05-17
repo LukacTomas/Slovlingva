@@ -35,63 +35,63 @@ describe('UpgradeSkillUseCase', () => {
     useCase = new UpgradeSkillUseCase(repo)
   })
 
-  it('throws when profile does not exist', () => {
-    expect(() => useCase.execute('nonexistent', 'heartSlots')).toThrow(/not found/i)
+  it('throws when profile does not exist', async () => {
+    await expect(useCase.execute('nonexistent', 'heartSlots')).rejects.toThrow(/not found/i)
   })
 
-  it('throws when player has 0 skill points', () => {
-    repo.save(makeProfile({ skillPoints: 0 }))
-    expect(() => useCase.execute('p1', 'heartSlots')).toThrow(/not enough/i)
+  it('throws when player has 0 skill points', async () => {
+    await repo.save(makeProfile({ skillPoints: 0 }))
+    await expect(useCase.execute('p1', 'heartSlots')).rejects.toThrow(/not enough/i)
   })
 
-  it('throws when skill is already at max level', () => {
+  it('throws when skill is already at max level', async () => {
     const cap = SKILL_CAPS.heartSlots
-    repo.save(makeProfile({ skills: { ...DEFAULT_SKILLS, heartSlots: cap } }))
-    expect(() => useCase.execute('p1', 'heartSlots')).toThrow(/max level/i)
+    await repo.save(makeProfile({ skills: { ...DEFAULT_SKILLS, heartSlots: cap } }))
+    await expect(useCase.execute('p1', 'heartSlots')).rejects.toThrow(/max level/i)
   })
 
-  it('increments heartSlots by 1', () => {
-    repo.save(makeProfile())
-    const updated = useCase.execute('p1', 'heartSlots')
+  it('increments heartSlots by 1', async () => {
+    await repo.save(makeProfile())
+    const updated = await useCase.execute('p1', 'heartSlots')
     expect(updated.skills.heartSlots).toBe(1)
   })
 
-  it('decrements skillPoints by 1', () => {
-    repo.save(makeProfile({ skillPoints: 3 }))
-    const updated = useCase.execute('p1', 'heartSlots')
+  it('decrements skillPoints by 1', async () => {
+    await repo.save(makeProfile({ skillPoints: 3 }))
+    const updated = await useCase.execute('p1', 'heartSlots')
     expect(updated.skillPoints).toBe(2)
   })
 
-  it('persists the upgrade to the repository', () => {
-    repo.save(makeProfile())
-    useCase.execute('p1', 'heartSlots')
-    expect(repo.findById('p1')?.skills.heartSlots).toBe(1)
+  it('persists the upgrade to the repository', async () => {
+    await repo.save(makeProfile())
+    await useCase.execute('p1', 'heartSlots')
+    expect((await repo.findById('p1'))?.skills.heartSlots).toBe(1)
   })
 
   const allSkills: SkillKey[] = ['heartSlots', 'xpBoostLevel', 'hintsPerRound', 'skipCharges']
 
   allSkills.forEach(skill => {
-    it(`upgrades ${skill} from 0 to 1`, () => {
-      repo.save(makeProfile())
-      const updated = useCase.execute('p1', skill)
+    it(`upgrades ${skill} from 0 to 1`, async () => {
+      await repo.save(makeProfile())
+      const updated = await useCase.execute('p1', skill)
       expect(updated.skills[skill]).toBe(1)
     })
   })
 
-  it('does not affect other skill keys when upgrading one', () => {
-    repo.save(makeProfile())
-    const updated = useCase.execute('p1', 'xpBoostLevel')
+  it('does not affect other skill keys when upgrading one', async () => {
+    await repo.save(makeProfile())
+    const updated = await useCase.execute('p1', 'xpBoostLevel')
     expect(updated.skills.heartSlots).toBe(0)
     expect(updated.skills.hintsPerRound).toBe(0)
     expect(updated.skills.skipCharges).toBe(0)
   })
 
-  it('allows upgrading to max level over multiple purchases', () => {
+  it('allows upgrading to max level over multiple purchases', async () => {
     const cap = SKILL_CAPS.xpBoostLevel
-    repo.save(makeProfile({ skillPoints: cap }))
+    await repo.save(makeProfile({ skillPoints: cap }))
     let profile = makeProfile({ skillPoints: cap })
     for (let i = 0; i < cap; i++) {
-      profile = useCase.execute('p1', 'xpBoostLevel')
+      profile = await useCase.execute('p1', 'xpBoostLevel')
     }
     expect(profile.skills.xpBoostLevel).toBe(cap)
   })

@@ -33,20 +33,20 @@ describe('DeleteProfileUseCase', () => {
     useCase = new DeleteProfileUseCase(repo)
   })
 
-  it('removes the profile from the repository', () => {
-    repo.save(makeProfile('p1'))
-    useCase.execute('p1')
-    expect(repo.findAll()).toHaveLength(0)
+  it('removes the profile from the repository', async () => {
+    await repo.save(makeProfile('p1'))
+    await useCase.execute('p1')
+    expect(await repo.findAll()).toHaveLength(0)
   })
 
-  it('throws when profile does not exist', () => {
-    expect(() => useCase.execute('ghost')).toThrow()
+  it('throws when profile does not exist', async () => {
+    await expect(useCase.execute('ghost')).rejects.toThrow()
   })
 
-  it('clears active id if deleted profile was active', () => {
-    repo.save(makeProfile('p1'))
-    repo.setActiveId('p1')
-    useCase.execute('p1')
-    expect(repo.getActiveId()).toBeNull()
+  it('clears active id if deleted profile was active', async () => {
+    await repo.save(makeProfile('p1'))
+    await repo.setActiveId('p1')
+    await useCase.execute('p1')
+    expect(await repo.getActiveId()).toBeNull()
   })
 })

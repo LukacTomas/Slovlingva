@@ -10,8 +10,8 @@ export class UpgradeSkillUseCase {
     this.profileRepository = profileRepository
   }
 
-  execute(profileId: string, skill: SkillKey): IProfile {
-    const profile = this.profileRepository.findById(profileId)
+  async execute(profileId: string, skill: SkillKey): Promise<IProfile> {
+    const profile = await this.profileRepository.findById(profileId)
     if (!profile) throw new Error(`Profile not found: ${profileId}`)
 
     const currentLevel = profile.skills[skill]
@@ -34,7 +34,7 @@ export class UpgradeSkillUseCase {
       },
     }
 
-    this.profileRepository.save(updated)
+    await this.profileRepository.save(updated)
     return updated
   }
 }

@@ -34,90 +34,90 @@ describe('FinaliseRoundUseCase', () => {
     useCase = new FinaliseRoundUseCase(repo)
   })
 
-  it('throws when no active profile is set', () => {
-    expect(() => useCase.execute({ correctCount: 6, totalBlanks: 6, timerBonus: false })).toThrow()
+  it('throws when no active profile is set', async () => {
+    await expect(useCase.execute({ correctCount: 6, totalBlanks: 6, timerBonus: false })).rejects.toThrow()
   })
 
-  it('returns 0 XP when no blanks were correct', () => {
-    repo.save(makeProfile())
-    repo.setActiveId('p1')
-    const result = useCase.execute({ correctCount: 0, totalBlanks: 6, timerBonus: false })
+  it('returns 0 XP when no blanks were correct', async () => {
+    await repo.save(makeProfile())
+    await repo.setActiveId('p1')
+    const result = await useCase.execute({ correctCount: 0, totalBlanks: 6, timerBonus: false })
     expect(result.xpEarned).toBe(0)
   })
 
-  it('returns positive XP for correct answers', () => {
-    repo.save(makeProfile())
-    repo.setActiveId('p1')
-    const result = useCase.execute({ correctCount: 6, totalBlanks: 6, timerBonus: false })
+  it('returns positive XP for correct answers', async () => {
+    await repo.save(makeProfile())
+    await repo.setActiveId('p1')
+    const result = await useCase.execute({ correctCount: 6, totalBlanks: 6, timerBonus: false })
     expect(result.xpEarned).toBeGreaterThan(0)
   })
 
-  it('applies timer bonus multiplier', () => {
-    repo.save(makeProfile())
-    repo.setActiveId('p1')
-    const without = useCase.execute({ correctCount: 6, totalBlanks: 6, timerBonus: false })
-    repo.save(makeProfile({ totalXP: 0, gamesPlayed: 0, totalCorrect: 0, totalAttempts: 0 }))
-    const withBonus = useCase.execute({ correctCount: 6, totalBlanks: 6, timerBonus: true })
+  it('applies timer bonus multiplier', async () => {
+    await repo.save(makeProfile())
+    await repo.setActiveId('p1')
+    const without = await useCase.execute({ correctCount: 6, totalBlanks: 6, timerBonus: false })
+    await repo.save(makeProfile({ totalXP: 0, gamesPlayed: 0, totalCorrect: 0, totalAttempts: 0 }))
+    const withBonus = await useCase.execute({ correctCount: 6, totalBlanks: 6, timerBonus: true })
     expect(withBonus.xpEarned).toBeGreaterThan(without.xpEarned)
   })
 
-  it('calculates accuracy as correctCount / totalBlanks', () => {
-    repo.save(makeProfile())
-    repo.setActiveId('p1')
-    const result = useCase.execute({ correctCount: 3, totalBlanks: 6, timerBonus: false })
+  it('calculates accuracy as correctCount / totalBlanks', async () => {
+    await repo.save(makeProfile())
+    await repo.setActiveId('p1')
+    const result = await useCase.execute({ correctCount: 3, totalBlanks: 6, timerBonus: false })
     expect(result.accuracy).toBeCloseTo(0.5)
   })
 
-  it('updates profile totalXP in repository', () => {
-    repo.save(makeProfile())
-    repo.setActiveId('p1')
-    useCase.execute({ correctCount: 6, totalBlanks: 6, timerBonus: false })
-    expect(repo.findById('p1')?.totalXP).toBeGreaterThan(0)
+  it('updates profile totalXP in repository', async () => {
+    await repo.save(makeProfile())
+    await repo.setActiveId('p1')
+    await useCase.execute({ correctCount: 6, totalBlanks: 6, timerBonus: false })
+    expect((await repo.findById('p1'))?.totalXP).toBeGreaterThan(0)
   })
 
-  it('sets leveledUp true when XP crosses a threshold', () => {
-    repo.save(makeProfile({ totalXP: 99 }))
-    repo.setActiveId('p1')
-    const result = useCase.execute({ correctCount: 6, totalBlanks: 6, timerBonus: false })
+  it('sets leveledUp true when XP crosses a threshold', async () => {
+    await repo.save(makeProfile({ totalXP: 99 }))
+    await repo.setActiveId('p1')
+    const result = await useCase.execute({ correctCount: 6, totalBlanks: 6, timerBonus: false })
     expect(result.leveledUp).toBe(true)
   })
 
-  it('sets leveledUp false when XP does not cross a threshold', () => {
-    repo.save(makeProfile({ totalXP: 0 }))
-    repo.setActiveId('p1')
-    const result = useCase.execute({ correctCount: 1, totalBlanks: 6, timerBonus: false })
+  it('sets leveledUp false when XP does not cross a threshold', async () => {
+    await repo.save(makeProfile({ totalXP: 0 }))
+    await repo.setActiveId('p1')
+    const result = await useCase.execute({ correctCount: 1, totalBlanks: 6, timerBonus: false })
     expect(result.leveledUp).toBe(false)
   })
 
-  it('awards 1 skillPoint when a level-up occurs', () => {
-    repo.save(makeProfile({ totalXP: 99 }))   // 1 correct blank = 10 XP → crosses 100 threshold
-    repo.setActiveId('p1')
-    const result = useCase.execute({ correctCount: 6, totalBlanks: 6, timerBonus: false })
+  it('awards 1 skillPoint when a level-up occurs', async () => {
+    await repo.save(makeProfile({ totalXP: 99 }))   // 1 correct blank = 10 XP → crosses 100 threshold
+    await repo.setActiveId('p1')
+    const result = await useCase.execute({ correctCount: 6, totalBlanks: 6, timerBonus: false })
     expect(result.skillPointsEarned).toBe(1)
-    expect(repo.findById('p1')?.skillPoints).toBe(1)
+    expect((await repo.findById('p1'))?.skillPoints).toBe(1)
   })
 
-  it('awards 0 skillPoints when no level-up occurs', () => {
-    repo.save(makeProfile({ totalXP: 0 }))
-    repo.setActiveId('p1')
-    const result = useCase.execute({ correctCount: 1, totalBlanks: 6, timerBonus: false })
+  it('awards 0 skillPoints when no level-up occurs', async () => {
+    await repo.save(makeProfile({ totalXP: 0 }))
+    await repo.setActiveId('p1')
+    const result = await useCase.execute({ correctCount: 1, totalBlanks: 6, timerBonus: false })
     expect(result.skillPointsEarned).toBe(0)
-    expect(repo.findById('p1')?.skillPoints).toBe(0)
+    expect((await repo.findById('p1'))?.skillPoints).toBe(0)
   })
 
-  it('applies xpBoostLevel multiplier to XP earned', () => {
+  it('applies xpBoostLevel multiplier to XP earned', async () => {
     // xpBoostLevel: 2 → +20% XP
-    repo.save(makeProfile({ skills: { ...DEFAULT_SKILLS, xpBoostLevel: 2 } }))
-    repo.setActiveId('p1')
-    const boosted = useCase.execute({ correctCount: 6, totalBlanks: 6, timerBonus: false })
+    await repo.save(makeProfile({ skills: { ...DEFAULT_SKILLS, xpBoostLevel: 2 } }))
+    await repo.setActiveId('p1')
+    const boosted = await useCase.execute({ correctCount: 6, totalBlanks: 6, timerBonus: false })
     // baseline: 6 * 10 = 60; with 20% boost: 6 * 10 * 1.2 = 72
     expect(boosted.xpEarned).toBe(72)
   })
 
-  it('includes skillPointsEarned field in result', () => {
-    repo.save(makeProfile())
-    repo.setActiveId('p1')
-    const result = useCase.execute({ correctCount: 6, totalBlanks: 6, timerBonus: false })
+  it('includes skillPointsEarned field in result', async () => {
+    await repo.save(makeProfile())
+    await repo.setActiveId('p1')
+    const result = await useCase.execute({ correctCount: 6, totalBlanks: 6, timerBonus: false })
     expect(result).toHaveProperty('skillPointsEarned')
   })
 })
@@ -132,42 +132,42 @@ describe('FinaliseRoundUseCase — streak', () => {
     useCase = new FinaliseRoundUseCase(repo)
   })
 
-  it('sets streak to 1 and streakIncreased to false on first play', () => {
-    repo.save(makeProfile({ streak: 0, lastPlayedDate: '' }))
-    repo.setActiveId('p1')
-    const result = useCase.execute({ correctCount: 3, totalBlanks: 6, timerBonus: false, today: '2024-06-10' })
+  it('sets streak to 1 and streakIncreased to false on first play', async () => {
+    await repo.save(makeProfile({ streak: 0, lastPlayedDate: '' }))
+    await repo.setActiveId('p1')
+    const result = await useCase.execute({ correctCount: 3, totalBlanks: 6, timerBonus: false, today: '2024-06-10' })
     expect(result.streak).toBe(1)
     expect(result.streakIncreased).toBe(false)
-    expect(repo.findById('p1')?.streak).toBe(1)
-    expect(repo.findById('p1')?.lastPlayedDate).toBe('2024-06-10')
+    expect((await repo.findById('p1'))?.streak).toBe(1)
+    expect((await repo.findById('p1'))?.lastPlayedDate).toBe('2024-06-10')
   })
 
-  it('increments streak and sets streakIncreased to true on consecutive day', () => {
-    repo.save(makeProfile({ streak: 3, lastPlayedDate: '2024-06-09' }))
-    repo.setActiveId('p1')
-    const result = useCase.execute({ correctCount: 3, totalBlanks: 6, timerBonus: false, today: '2024-06-10' })
+  it('increments streak and sets streakIncreased to true on consecutive day', async () => {
+    await repo.save(makeProfile({ streak: 3, lastPlayedDate: '2024-06-09' }))
+    await repo.setActiveId('p1')
+    const result = await useCase.execute({ correctCount: 3, totalBlanks: 6, timerBonus: false, today: '2024-06-10' })
     expect(result.streak).toBe(4)
     expect(result.streakIncreased).toBe(true)
-    expect(repo.findById('p1')?.streak).toBe(4)
-    expect(repo.findById('p1')?.lastPlayedDate).toBe('2024-06-10')
+    expect((await repo.findById('p1'))?.streak).toBe(4)
+    expect((await repo.findById('p1'))?.lastPlayedDate).toBe('2024-06-10')
   })
 
-  it('keeps streak unchanged and sets streakIncreased to false when played again same day', () => {
-    repo.save(makeProfile({ streak: 5, lastPlayedDate: '2024-06-10' }))
-    repo.setActiveId('p1')
-    const result = useCase.execute({ correctCount: 3, totalBlanks: 6, timerBonus: false, today: '2024-06-10' })
+  it('keeps streak unchanged and sets streakIncreased to false when played again same day', async () => {
+    await repo.save(makeProfile({ streak: 5, lastPlayedDate: '2024-06-10' }))
+    await repo.setActiveId('p1')
+    const result = await useCase.execute({ correctCount: 3, totalBlanks: 6, timerBonus: false, today: '2024-06-10' })
     expect(result.streak).toBe(5)
     expect(result.streakIncreased).toBe(false)
-    expect(repo.findById('p1')?.streak).toBe(5)
+    expect((await repo.findById('p1'))?.streak).toBe(5)
   })
 
-  it('resets streak to 1 and sets streakIncreased to false when streak is broken', () => {
-    repo.save(makeProfile({ streak: 7, lastPlayedDate: '2024-06-07' }))
-    repo.setActiveId('p1')
-    const result = useCase.execute({ correctCount: 3, totalBlanks: 6, timerBonus: false, today: '2024-06-10' })
+  it('resets streak to 1 and sets streakIncreased to false when streak is broken', async () => {
+    await repo.save(makeProfile({ streak: 7, lastPlayedDate: '2024-06-07' }))
+    await repo.setActiveId('p1')
+    const result = await useCase.execute({ correctCount: 3, totalBlanks: 6, timerBonus: false, today: '2024-06-10' })
     expect(result.streak).toBe(1)
     expect(result.streakIncreased).toBe(false)
-    expect(repo.findById('p1')?.streak).toBe(1)
-    expect(repo.findById('p1')?.lastPlayedDate).toBe('2024-06-10')
+    expect((await repo.findById('p1'))?.streak).toBe(1)
+    expect((await repo.findById('p1'))?.lastPlayedDate).toBe('2024-06-10')
   })
 })

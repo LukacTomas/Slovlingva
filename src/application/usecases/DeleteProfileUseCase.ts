@@ -7,9 +7,9 @@ export class DeleteProfileUseCase {
     this.profileRepository = profileRepository
   }
 
-  execute(id: string): void {
-    const profile = this.profileRepository.findById(id)
+  async execute(id: string): Promise<void> {
+    const profile = await this.profileRepository.findById(id)
     if (!profile) throw new Error(`Profile not found: ${id}`)
-    this.profileRepository.delete(id)
+    await this.profileRepository.delete(id)
   }
 }

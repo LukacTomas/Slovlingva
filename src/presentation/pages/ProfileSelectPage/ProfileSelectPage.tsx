@@ -15,24 +15,24 @@ export function ProfileSelectPage({ onNavigate }: ProfileSelectPageProps) {
   const [avatarIndex, setAvatarIndex] = useState(0)
   const [nameError, setNameError] = useState('')
 
-  const handleSelect = (id: string) => {
-    selectProfile(id)
+  const handleSelect = async (id: string) => {
+    await selectProfile(id)
     onNavigate('subject-select')
   }
 
-  const handleCreate = () => {
+  const handleCreate = async () => {
     const trimmed = name.trim()
     if (!trimmed) { setNameError('Zadaj meno'); return }
     if (trimmed.length > 20) { setNameError('Meno je príliš dlhé'); return }
-    const profile = createProfile(trimmed, avatarIndex)
-    selectProfile(profile.id)
+    const profile = await createProfile(trimmed, avatarIndex)
+    await selectProfile(profile.id)
     onNavigate('subject-select')
   }
 
   const handleDelete = (e: React.MouseEvent, id: string) => {
     e.stopPropagation()
     if (confirm('Naozaj chceš odstrániť tento profil?')) {
-      deleteProfile(id)
+      void deleteProfile(id)
     }
   }
 

@@ -54,31 +54,33 @@ export function MathGamePage({ onNavigate }: MathGamePageProps) {
   useEffect(() => {
     if (!gameState) return
     if (gameState.status === 'round_end' || gameState.status === 'game_over') {
-      const result = finaliseRound(gameState.config.timerEnabled)
-      loadProfiles()
+      void (async () => {
+        const result = await finaliseRound(gameState.config.timerEnabled)
+        await loadProfiles()
 
-      const failedRecords = getFailedRecords()
-      // Build replay exercises with answer mode metadata
-      const replayExercises = failedRecords.map(r => ({
-        ...exercises[r.exerciseIndex],
-        __replayMeta: { answerMode: gameState.config.answerMode },
-      }))
+        const failedRecords = getFailedRecords()
+        // Build replay exercises with answer mode metadata
+        const replayExercises = failedRecords.map(r => ({
+          ...exercises[r.exerciseIndex],
+          __replayMeta: { answerMode: gameState.config.answerMode },
+        }))
 
-      const config = gameState.config
-      useSessionStore.getState().endRound({
-        subject: 'matematika',
-        routes: { setupPage: 'math-setup', gamePage: 'math-game' },
-        lastRoundResult: result,
-        gameStatus: gameState.status,
-        failedExercises: failedRecords,
-        replayExercises,
-        rendererKey: 'matematika',
-        gameConfig: config,
-        restartRound: () => startRound(config),
-        resetGame,
-      })
+        const config = gameState.config
+        useSessionStore.getState().endRound({
+          subject: 'matematika',
+          routes: { setupPage: 'math-setup', gamePage: 'math-game' },
+          lastRoundResult: result,
+          gameStatus: gameState.status,
+          failedExercises: failedRecords,
+          replayExercises,
+          rendererKey: 'matematika',
+          gameConfig: config,
+          restartRound: () => startRound(config),
+          resetGame,
+        })
 
-      onNavigate(failedRecords.length > 0 ? 'replay' : 'round-end')
+        onNavigate(failedRecords.length > 0 ? 'replay' : 'round-end')
+      })()
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [gameState?.status])

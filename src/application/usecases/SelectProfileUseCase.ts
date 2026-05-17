@@ -7,9 +7,9 @@ export class SelectProfileUseCase {
     this.profileRepository = profileRepository
   }
 
-  execute(id: string): void {
-    const profile = this.profileRepository.findById(id)
+  async execute(id: string): Promise<void> {
+    const profile = await this.profileRepository.findById(id)
     if (!profile) throw new Error(`Profile not found: ${id}`)
-    this.profileRepository.setActiveId(id)
+    await this.profileRepository.setActiveId(id)
   }
 }

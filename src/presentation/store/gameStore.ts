@@ -3,15 +3,12 @@ import type { IExercise, CharacterOption } from '../../domain/entities/exercise.
 import type { IGameConfig, IGameState, IRoundResult } from '../../domain/entities/game.entity'
 import type { FailReason, IFailedExerciseRecord } from '../../domain/entities/game-session.entity'
 import { DataLoader } from '../../infrastructure/data/DataLoader'
-import { LocalStorageAdapter } from '../../infrastructure/storage/LocalStorageAdapter'
-import { ProfileRepository } from '../../infrastructure/repositories/ProfileRepository'
+import { profileRepo } from '../../infrastructure/container'
 import { StartRoundUseCase } from '../../application/usecases/StartRoundUseCase'
 import { SubmitAnswerUseCase } from '../../application/usecases/SubmitAnswerUseCase'
 import { FinaliseRoundUseCase } from '../../application/usecases/FinaliseRoundUseCase'
 
 const dataLoader = new DataLoader()
-const storage = new LocalStorageAdapter()
-const profileRepo = new ProfileRepository(storage)
 
 /** Helper: record a failure for the current exercise if not already recorded. */
 function recordFailure(
@@ -40,7 +37,7 @@ interface GameStoreState {
   resetBlank: (exerciseId: string, blankId: string) => void
   loseHeart: () => void
   nextExercise: () => void
-  finaliseRound: (timerBonus: boolean) => IRoundResult
+  finaliseRound: (timerBonus: boolean) => Promise<IRoundResult>
   resetGame: () => void
   tick: () => void
   applyHint: (exerciseId: string, blankId: string) => { allResolved: boolean }
@@ -139,7 +136,7 @@ export const useGameStore = create<GameStoreState>((set, get) => ({
     })
   },
 
-  finaliseRound: (timerBonus) => {
+  finaliseRound: async (timerBonus) => {
     const { gameState, exercises, failedIndices } = get()
     if (!gameState) throw new Error('No active game state')
 
@@ -147,7 +144,7 @@ export const useGameStore = create<GameStoreState>((set, get) => ({
     const totalExercises = exercises.length
     const correctCount = totalExercises - failedIndices.size
 
-    const result = new FinaliseRoundUseCase(profileRepo).execute({
+    const result = await new FinaliseRoundUseCase(profileRepo).execute({
       correctCount,
       totalBlanks: totalExercises,
       timerBonus,

@@ -61,34 +61,36 @@ export function GamePage({ onNavigate }: GamePageProps) {
   useEffect(() => {
     if (!gameState) return
     if (gameState.status === 'round_end' || gameState.status === 'game_over') {
-      const result = finaliseRound(gameState.config.timerEnabled)
-      loadProfiles() // sync Zustand profile store with updated localStorage data
+      void (async () => {
+        const result = await finaliseRound(gameState.config.timerEnabled)
+        await loadProfiles() // sync Zustand profile store with updated localStorage data
 
-      const failedRecords = getFailedRecords()
-      // Build replay exercises: clone failed exercises with blanks reset
-      const replayExercises = failedRecords.map(r => {
-        const ex = exercises[r.exerciseIndex]
-        return {
-          ...ex,
-          blanks: ex.blanks.map(b => ({ ...b, filledChar: null, state: 'empty' as const })),
-        } satisfies IExercise
-      })
+        const failedRecords = getFailedRecords()
+        // Build replay exercises: clone failed exercises with blanks reset
+        const replayExercises = failedRecords.map(r => {
+          const ex = exercises[r.exerciseIndex]
+          return {
+            ...ex,
+            blanks: ex.blanks.map(b => ({ ...b, filledChar: null, state: 'empty' as const })),
+          } satisfies IExercise
+        })
 
-      const config = gameState.config
-      useSessionStore.getState().endRound({
-        subject: 'slovencina',
-        routes: { setupPage: 'game-setup', gamePage: 'game' },
-        lastRoundResult: result,
-        gameStatus: gameState.status,
-        failedExercises: failedRecords,
-        replayExercises,
-        rendererKey: 'slovencina',
-        gameConfig: config,
-        restartRound: () => startRound(config),
-        resetGame,
-      })
+        const config = gameState.config
+        useSessionStore.getState().endRound({
+          subject: 'slovencina',
+          routes: { setupPage: 'game-setup', gamePage: 'game' },
+          lastRoundResult: result,
+          gameStatus: gameState.status,
+          failedExercises: failedRecords,
+          replayExercises,
+          rendererKey: 'slovencina',
+          gameConfig: config,
+          restartRound: () => startRound(config),
+          resetGame,
+        })
 
-      onNavigate(failedRecords.length > 0 ? 'replay' : 'round-end')
+        onNavigate(failedRecords.length > 0 ? 'replay' : 'round-end')
+      })()
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [gameState?.status])

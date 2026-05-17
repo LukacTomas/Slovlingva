@@ -33,13 +33,13 @@ describe('SelectProfileUseCase', () => {
     useCase = new SelectProfileUseCase(repo)
   })
 
-  it('sets the active profile id', () => {
-    repo.save(makeProfile('p1'))
-    useCase.execute('p1')
-    expect(repo.getActiveId()).toBe('p1')
+  it('sets the active profile id', async () => {
+    await repo.save(makeProfile('p1'))
+    await useCase.execute('p1')
+    expect(await repo.getActiveId()).toBe('p1')
   })
 
-  it('throws when profile does not exist', () => {
-    expect(() => useCase.execute('ghost')).toThrow()
+  it('throws when profile does not exist', async () => {
+    await expect(useCase.execute('ghost')).rejects.toThrow()
   })
 })

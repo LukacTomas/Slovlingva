@@ -1,7 +1,7 @@
 import type { IStoragePort } from '../../domain/ports/IStoragePort'
 
 export class LocalStorageAdapter implements IStoragePort {
-  get<T>(key: string): T | null {
+  async get<T>(key: string): Promise<T | null> {
     const raw = localStorage.getItem(key)
     if (raw === null) return null
     try {
@@ -11,15 +11,15 @@ export class LocalStorageAdapter implements IStoragePort {
     }
   }
 
-  set<T>(key: string, value: T): void {
+  async set<T>(key: string, value: T): Promise<void> {
     localStorage.setItem(key, JSON.stringify(value))
   }
 
-  remove(key: string): void {
+  async remove(key: string): Promise<void> {
     localStorage.removeItem(key)
   }
 
-  clear(): void {
+  async clear(): Promise<void> {
     localStorage.clear()
   }
 }

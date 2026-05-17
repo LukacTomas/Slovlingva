@@ -22,9 +22,9 @@ export class FinaliseRoundUseCase {
     this.profileRepository = profileRepository
   }
 
-  execute({ correctCount, totalBlanks, timerBonus, today }: IFinaliseRoundInput): IRoundResult {
-    const activeId = this.profileRepository.getActiveId()
-    const profile = activeId ? this.profileRepository.findById(activeId) : null
+  async execute({ correctCount, totalBlanks, timerBonus, today }: IFinaliseRoundInput): Promise<IRoundResult> {
+    const activeId = await this.profileRepository.getActiveId()
+    const profile = activeId ? await this.profileRepository.findById(activeId) : null
     if (!profile) throw new Error('No active profile — cannot finalise round')
 
     // XP boost multiplier from purchased upgrades (default 0 → 1.0×)
@@ -63,7 +63,7 @@ export class FinaliseRoundUseCase {
       streakIncreased = false
     }
 
-    this.profileRepository.save({
+    await this.profileRepository.save({
       ...profile,
       totalXP: newXP,
       level: newLevel,

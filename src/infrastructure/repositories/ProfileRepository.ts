@@ -12,12 +12,12 @@ export class ProfileRepository implements IProfileRepository {
     this.storage = storage
   }
 
-  private loadStore(): IProfileStore {
-    return this.storage.get<IProfileStore>(STORE_KEY) ?? { profiles: [], activeProfileId: null }
+  private async loadStore(): Promise<IProfileStore> {
+    return await this.storage.get<IProfileStore>(STORE_KEY) ?? { profiles: [], activeProfileId: null }
   }
 
-  private persistStore(store: IProfileStore): void {
-    this.storage.set(STORE_KEY, store)
+  private async persistStore(store: IProfileStore): Promise<void> {
+    await this.storage.set(STORE_KEY, store)
   }
 
   /**
@@ -35,40 +35,43 @@ export class ProfileRepository implements IProfileRepository {
     }
   }
 
-  findAll(): IProfile[] {
-    return this.loadStore().profiles.map(p => this.migrateProfile(p))
+  async findAll(): Promise<IProfile[]> {
+    const store = await this.loadStore()
+    return store.profiles.map(p => this.migrateProfile(p))
   }
 
-  findById(id: string): IProfile | null {
-    const raw = this.loadStore().profiles.find(p => p.id === id)
+  async findById(id: string): Promise<IProfile | null> {
+    const store = await this.loadStore()
+    const raw = store.profiles.find(p => p.id === id)
     return raw ? this.migrateProfile(raw) : null
   }
 
-  save(profile: IProfile): void {
-    const store = this.loadStore()
+  async save(profile: IProfile): Promise<void> {
+    const store = await this.loadStore()
     const idx = store.profiles.findIndex(p => p.id === profile.id)
     if (idx === -1) {
       store.profiles.push(profile)
     } else {
       store.profiles[idx] = profile
     }
-    this.persistStore(store)
+    await this.persistStore(store)
   }
 
-  delete(id: string): void {
-    const store = this.loadStore()
+  async delete(id: string): Promise<void> {
+    const store = await this.loadStore()
     store.profiles = store.profiles.filter(p => p.id !== id)
     if (store.activeProfileId === id) store.activeProfileId = null
-    this.persistStore(store)
+    await this.persistStore(store)
   }
 
-  getActiveId(): string | null {
-    return this.loadStore().activeProfileId
+  async getActiveId(): Promise<string | null> {
+    const store = await this.loadStore()
+    return store.activeProfileId
   }
 
-  setActiveId(id: string | null): void {
-    const store = this.loadStore()
+  async setActiveId(id: string | null): Promise<void> {
+    const store = await this.loadStore()
     store.activeProfileId = id
-    this.persistStore(store)
+    await this.persistStore(store)
   }
 }

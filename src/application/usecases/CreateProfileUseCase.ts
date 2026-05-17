@@ -9,7 +9,7 @@ export class CreateProfileUseCase {
     this.profileRepository = profileRepository
   }
 
-  execute(name: string, avatarIndex: number): IProfile {
+  async execute(name: string, avatarIndex: number): Promise<IProfile> {
     const profile: IProfile = {
       id: `${Date.now()}-${Math.random().toString(36).slice(2)}`,
       name,
@@ -25,7 +25,7 @@ export class CreateProfileUseCase {
       lastPlayedDate: '',
       createdAt: new Date().toISOString(),
     }
-    this.profileRepository.save(profile)
+    await this.profileRepository.save(profile)
     return profile
   }
 }
