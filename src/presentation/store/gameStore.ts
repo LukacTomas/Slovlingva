@@ -1,6 +1,7 @@
 import { create } from 'zustand'
 import type { IExercise, CharacterOption } from '../../domain/entities/exercise.entity'
 import type { IGameConfig, IGameState, IRoundResult } from '../../domain/entities/game.entity'
+import type { FailReason, IFailedExerciseRecord } from '../../domain/entities/game-session.entity'
 import { DataLoader } from '../../infrastructure/data/DataLoader'
 import { LocalStorageAdapter } from '../../infrastructure/storage/LocalStorageAdapter'
 import { ProfileRepository } from '../../infrastructure/repositories/ProfileRepository'
@@ -12,10 +13,25 @@ const dataLoader = new DataLoader()
 const storage = new LocalStorageAdapter()
 const profileRepo = new ProfileRepository(storage)
 
+/** Helper: record a failure for the current exercise if not already recorded. */
+function recordFailure(
+  gameState: IGameState | null,
+  failedIndices: Map<number, FailReason>,
+  reason: FailReason,
+): Map<number, FailReason> | null {
+  if (!gameState) return null
+  const idx = gameState.currentExerciseIndex
+  if (failedIndices.has(idx)) return null
+  const updated = new Map(failedIndices)
+  updated.set(idx, reason)
+  return updated
+}
+
 interface GameStoreState {
   exercises: IExercise[]
   gameState: IGameState | null
   lastRoundResult: IRoundResult | null
+  failedIndices: Map<number, FailReason>
   dataReady: boolean
 
   loadData: () => Promise<void>
@@ -29,12 +45,17 @@ interface GameStoreState {
   tick: () => void
   applyHint: (exerciseId: string, blankId: string) => { allResolved: boolean }
   applySkip: () => void
+  /** Mark current exercise as failed with a reason (e.g. timer expiry). */
+  markFailed: (reason: FailReason) => void
+  /** Get the failed exercise records for the session store. */
+  getFailedRecords: () => IFailedExerciseRecord[]
 }
 
 export const useGameStore = create<GameStoreState>((set, get) => ({
   exercises: [],
   gameState: null,
   lastRoundResult: null,
+  failedIndices: new Map(),
   dataReady: false,
 
   loadData: async () => {
@@ -44,7 +65,7 @@ export const useGameStore = create<GameStoreState>((set, get) => ({
 
   startRound: (config) => {
     const { exercises, gameState } = new StartRoundUseCase(dataLoader).execute(config)
-    set({ exercises, gameState, lastRoundResult: null })
+    set({ exercises, gameState, lastRoundResult: null, failedIndices: new Map() })
   },
 
   fillBlank: (exerciseId, blankId, char) => {
@@ -58,6 +79,13 @@ export const useGameStore = create<GameStoreState>((set, get) => ({
     set(state => ({
       exercises: state.exercises.map(e => e.id === exerciseId ? updatedExercise : e),
     }))
+
+    // Track failure on wrong answer
+    if (!correct) {
+      const { gameState: gs, failedIndices } = get()
+      const updated = recordFailure(gs, failedIndices, 'wrong')
+      if (updated) set({ failedIndices: updated })
+    }
 
     return { correct, allResolved: allBlanksResolved }
   },
@@ -112,16 +140,16 @@ export const useGameStore = create<GameStoreState>((set, get) => ({
   },
 
   finaliseRound: (timerBonus) => {
-    const { gameState, exercises } = get()
+    const { gameState, exercises, failedIndices } = get()
     if (!gameState) throw new Error('No active game state')
 
-    const allBlanks = exercises.flatMap(e => e.blanks)
-    const correctCount = allBlanks.filter(b => b.state === 'correct').length
-    const totalBlanks = allBlanks.length
+    // Count at exercise level: exercises without any failure = correct
+    const totalExercises = exercises.length
+    const correctCount = totalExercises - failedIndices.size
 
     const result = new FinaliseRoundUseCase(profileRepo).execute({
       correctCount,
-      totalBlanks,
+      totalBlanks: totalExercises,
       timerBonus,
     })
 
@@ -130,7 +158,7 @@ export const useGameStore = create<GameStoreState>((set, get) => ({
   },
 
   resetGame: () => {
-    set({ exercises: [], gameState: null, lastRoundResult: null })
+    set({ exercises: [], gameState: null, lastRoundResult: null, failedIndices: new Map() })
   },
 
   tick: () => {
@@ -147,12 +175,16 @@ export const useGameStore = create<GameStoreState>((set, get) => ({
   },
 
   applyHint: (exerciseId, blankId) => {
-    const { exercises } = get()
+    const { exercises, gameState: gs, failedIndices } = get()
     const exercise = exercises.find(e => e.id === exerciseId)
     if (!exercise) return { allResolved: false }
 
     const blank = exercise.blanks.find(b => b.id === blankId)
     if (!blank || blank.state === 'correct') return { allResolved: false }
+
+    // Track hint as failure
+    const updated = recordFailure(gs, failedIndices, 'hint')
+    if (updated) set({ failedIndices: updated })
 
     // Fill the blank with the correct character and mark it correct
     const updatedBlanks = exercise.blanks.map(b =>
@@ -175,6 +207,11 @@ export const useGameStore = create<GameStoreState>((set, get) => ({
   },
 
   applySkip: () => {
+    // Track skip as failure
+    const { gameState: gs, failedIndices } = get()
+    const updated = recordFailure(gs, failedIndices, 'skipped')
+    if (updated) set({ failedIndices: updated })
+
     set(state => {
       if (!state.gameState) return {}
       const nextIndex = state.gameState.currentExerciseIndex + 1
@@ -191,5 +228,18 @@ export const useGameStore = create<GameStoreState>((set, get) => ({
         },
       }
     })
+  },
+
+  markFailed: (reason) => {
+    const { gameState: gs, failedIndices } = get()
+    const updated = recordFailure(gs, failedIndices, reason)
+    if (updated) set({ failedIndices: updated })
+  },
+
+  getFailedRecords: () => {
+    const { failedIndices } = get()
+    return Array.from(failedIndices.entries())
+      .sort(([a], [b]) => a - b)
+      .map(([exerciseIndex, reason]) => ({ exerciseIndex, reason }))
   },
 }))

@@ -3,6 +3,7 @@ import './MathGamePage.css'
 import { useMathGame } from '../../hooks/useMathGame'
 import { useProfile } from '../../hooks/useProfile'
 import { useTimer } from '../../hooks/useTimer'
+import { useSessionStore } from '../../store/sessionStore'
 import { Hearts } from '../../components/Hearts/Hearts'
 import { LevelBadge } from '../../components/LevelBadge/LevelBadge'
 import { MathExerciseCard } from '../../components/MathExerciseCard/MathExerciseCard'
@@ -26,6 +27,10 @@ export function MathGamePage({ onNavigate }: MathGamePageProps) {
     tick,
     applyHint,
     applySkip,
+    markFailed,
+    getFailedRecords,
+    startRound,
+    resetGame,
   } = useMathGame()
 
   const { activeProfile, loadProfiles } = useProfile()
@@ -49,9 +54,31 @@ export function MathGamePage({ onNavigate }: MathGamePageProps) {
   useEffect(() => {
     if (!gameState) return
     if (gameState.status === 'round_end' || gameState.status === 'game_over') {
-      finaliseRound(gameState.config.timerEnabled)
+      const result = finaliseRound(gameState.config.timerEnabled)
       loadProfiles()
-      onNavigate('math-round-end')
+
+      const failedRecords = getFailedRecords()
+      // Build replay exercises with answer mode metadata
+      const replayExercises = failedRecords.map(r => ({
+        ...exercises[r.exerciseIndex],
+        __replayMeta: { answerMode: gameState.config.answerMode },
+      }))
+
+      const config = gameState.config
+      useSessionStore.getState().endRound({
+        subject: 'matematika',
+        routes: { setupPage: 'math-setup', gamePage: 'math-game' },
+        lastRoundResult: result,
+        gameStatus: gameState.status,
+        failedExercises: failedRecords,
+        replayExercises,
+        rendererKey: 'matematika',
+        gameConfig: config,
+        restartRound: () => startRound(config),
+        resetGame,
+      })
+
+      onNavigate(failedRecords.length > 0 ? 'replay' : 'round-end')
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [gameState?.status])
@@ -59,8 +86,9 @@ export function MathGamePage({ onNavigate }: MathGamePageProps) {
   const timerActive = !!(gameState?.config.timerEnabled && gameState.status === 'playing' && !advancing)
 
   const handleTimerExpire = useCallback(() => {
+    markFailed('timeout')
     loseHeart()
-  }, [loseHeart])
+  }, [markFailed, loseHeart])
 
   useTimer({
     active: timerActive,

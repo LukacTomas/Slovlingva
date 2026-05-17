@@ -9,6 +9,11 @@ import { RoundEndPage } from './presentation/pages/RoundEndPage/RoundEndPage'
 import { SkillsPage } from './presentation/pages/SkillsPage/SkillsPage'
 import { MathSetupPage } from './presentation/pages/MathSetupPage/MathSetupPage'
 import { MathGamePage } from './presentation/pages/MathGamePage/MathGamePage'
+import { ReplayPage } from './presentation/pages/ReplayPage/ReplayPage'
+import { registerAllRenderers } from './presentation/registry/registerRenderers'
+
+// Register replay renderers once at module load
+registerAllRenderers()
 
 export type AppPage =
   | 'loading'
@@ -17,10 +22,10 @@ export type AppPage =
   | 'game-setup'
   | 'game'
   | 'round-end'
+  | 'replay'
   | 'skills'
   | 'math-setup'
   | 'math-game'
-  | 'math-round-end'
 
 function LoadingScreen() {
   return (
@@ -66,14 +71,14 @@ function App() {
       return <GamePage onNavigate={setPage} />
     case 'round-end':
       return <RoundEndPage onNavigate={setPage} />
+    case 'replay':
+      return <ReplayPage onNavigate={setPage} />
     case 'skills':
       return <SkillsPage onNavigate={setPage} />
     case 'math-setup':
       return <MathSetupPage onNavigate={setPage} />
     case 'math-game':
       return <MathGamePage onNavigate={setPage} />
-    case 'math-round-end':
-      return <RoundEndPage onNavigate={setPage} isMath />
   }
 }
 

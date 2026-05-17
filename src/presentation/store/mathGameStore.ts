@@ -1,6 +1,7 @@
 import { create } from 'zustand'
 import type { IMathExercise, IMathGameConfig, IMathGameState } from '../../domain/entities/math-exercise.entity'
 import type { IRoundResult } from '../../domain/entities/game.entity'
+import type { FailReason, IFailedExerciseRecord } from '../../domain/entities/game-session.entity'
 import { LocalStorageAdapter } from '../../infrastructure/storage/LocalStorageAdapter'
 import { ProfileRepository } from '../../infrastructure/repositories/ProfileRepository'
 import { StartMathRoundUseCase } from '../../application/usecases/StartMathRoundUseCase'
@@ -10,12 +11,27 @@ import { FinaliseRoundUseCase } from '../../application/usecases/FinaliseRoundUs
 const storage = new LocalStorageAdapter()
 const profileRepo = new ProfileRepository(storage)
 
+/** Helper: record a failure for the current exercise if not already recorded. */
+function recordFailure(
+  gameState: IMathGameState | null,
+  failedIndices: Map<number, FailReason>,
+  reason: FailReason,
+): Map<number, FailReason> | null {
+  if (!gameState) return null
+  const idx = gameState.currentExerciseIndex
+  if (failedIndices.has(idx)) return null
+  const updated = new Map(failedIndices)
+  updated.set(idx, reason)
+  return updated
+}
+
 interface MathGameStoreState {
   exercises: IMathExercise[]
   gameState: IMathGameState | null
   lastRoundResult: IRoundResult | null
   /** Tracks which exercises the player answered correctly (by exercise id). */
   answeredCorrectly: Set<string>
+  failedIndices: Map<number, FailReason>
 
   startRound: (config: IMathGameConfig) => void
   submitAnswer: (exerciseId: string, answer: number) => { correct: boolean }
@@ -26,6 +42,10 @@ interface MathGameStoreState {
   tick: () => void
   applyHint: (exerciseId: string) => void
   applySkip: () => void
+  /** Mark current exercise as failed with a reason (e.g. timer expiry). */
+  markFailed: (reason: FailReason) => void
+  /** Get the failed exercise records for the session store. */
+  getFailedRecords: () => IFailedExerciseRecord[]
 }
 
 export const useMathGameStore = create<MathGameStoreState>((set, get) => ({
@@ -33,10 +53,11 @@ export const useMathGameStore = create<MathGameStoreState>((set, get) => ({
   gameState: null,
   lastRoundResult: null,
   answeredCorrectly: new Set(),
+  failedIndices: new Map(),
 
   startRound: (config) => {
     const { exercises, gameState } = new StartMathRoundUseCase().execute(config)
-    set({ exercises, gameState, lastRoundResult: null, answeredCorrectly: new Set() })
+    set({ exercises, gameState, lastRoundResult: null, answeredCorrectly: new Set(), failedIndices: new Map() })
   },
 
   submitAnswer: (exerciseId, answer) => {
@@ -57,6 +78,11 @@ export const useMathGameStore = create<MathGameStoreState>((set, get) => ({
             : null,
         }
       })
+    } else {
+      // Track wrong answer as failure
+      const { gameState: gs, failedIndices } = get()
+      const updated = recordFailure(gs, failedIndices, 'wrong')
+      if (updated) set({ failedIndices: updated })
     }
 
     return { correct }
@@ -96,15 +122,16 @@ export const useMathGameStore = create<MathGameStoreState>((set, get) => ({
   },
 
   finaliseRound: (timerBonus) => {
-    const { gameState, exercises, answeredCorrectly } = get()
+    const { gameState, exercises, failedIndices } = get()
     if (!gameState) throw new Error('No active math game state')
 
-    const correctCount = answeredCorrectly.size
-    const totalBlanks = exercises.length  // 1 "blank" per exercise in math
+    // Count at exercise level: exercises without any failure = correct
+    const totalExercises = exercises.length
+    const correctCount = totalExercises - failedIndices.size
 
     const result = new FinaliseRoundUseCase(profileRepo).execute({
       correctCount,
-      totalBlanks,
+      totalBlanks: totalExercises,
       timerBonus,
     })
 
@@ -113,7 +140,7 @@ export const useMathGameStore = create<MathGameStoreState>((set, get) => ({
   },
 
   resetGame: () => {
-    set({ exercises: [], gameState: null, lastRoundResult: null, answeredCorrectly: new Set() })
+    set({ exercises: [], gameState: null, lastRoundResult: null, answeredCorrectly: new Set(), failedIndices: new Map() })
   },
 
   tick: () => {
@@ -130,9 +157,13 @@ export const useMathGameStore = create<MathGameStoreState>((set, get) => ({
   },
 
   applyHint: (exerciseId) => {
-    const { exercises } = get()
+    const { exercises, gameState: gs, failedIndices } = get()
     const exercise = exercises.find(e => e.id === exerciseId)
     if (!exercise) return
+
+    // Track hint as failure
+    const updated = recordFailure(gs, failedIndices, 'hint')
+    if (updated) set({ failedIndices: updated })
 
     // In math mode, a hint reveals the correct answer — mark it as correct
     set(state => {
@@ -152,6 +183,11 @@ export const useMathGameStore = create<MathGameStoreState>((set, get) => ({
   },
 
   applySkip: () => {
+    // Track skip as failure
+    const { gameState: gs, failedIndices } = get()
+    const updated = recordFailure(gs, failedIndices, 'skipped')
+    if (updated) set({ failedIndices: updated })
+
     set(state => {
       if (!state.gameState) return {}
       const nextIndex = state.gameState.currentExerciseIndex + 1
@@ -168,5 +204,18 @@ export const useMathGameStore = create<MathGameStoreState>((set, get) => ({
         },
       }
     })
+  },
+
+  markFailed: (reason) => {
+    const { gameState: gs, failedIndices } = get()
+    const updated = recordFailure(gs, failedIndices, reason)
+    if (updated) set({ failedIndices: updated })
+  },
+
+  getFailedRecords: () => {
+    const { failedIndices } = get()
+    return Array.from(failedIndices.entries())
+      .sort(([a], [b]) => a - b)
+      .map(([exerciseIndex, reason]) => ({ exerciseIndex, reason }))
   },
 }))

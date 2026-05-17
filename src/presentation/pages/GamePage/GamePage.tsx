@@ -3,11 +3,12 @@ import './GamePage.css'
 import { useGame } from '../../hooks/useGame'
 import { useProfile } from '../../hooks/useProfile'
 import { useTimer } from '../../hooks/useTimer'
+import { useSessionStore } from '../../store/sessionStore'
 import { Hearts } from '../../components/Hearts/Hearts'
 import { LevelBadge } from '../../components/LevelBadge/LevelBadge'
 import { TileBar } from '../../components/TileBar/TileBar'
 import { ExerciseCard } from '../../components/ExerciseCard/ExerciseCard'
-import type { CharacterOption } from '../../../domain/entities/exercise.entity'
+import type { CharacterOption, IExercise } from '../../../domain/entities/exercise.entity'
 import type { AppPage } from '../../../App'
 
 interface GamePageProps {
@@ -27,6 +28,10 @@ export function GamePage({ onNavigate }: GamePageProps) {
     tick,
     applyHint,
     applySkip,
+    markFailed,
+    getFailedRecords,
+    startRound,
+    resetGame,
   } = useGame()
 
   const { activeProfile, loadProfiles } = useProfile()
@@ -56,9 +61,34 @@ export function GamePage({ onNavigate }: GamePageProps) {
   useEffect(() => {
     if (!gameState) return
     if (gameState.status === 'round_end' || gameState.status === 'game_over') {
-      finaliseRound(gameState.config.timerEnabled)
+      const result = finaliseRound(gameState.config.timerEnabled)
       loadProfiles() // sync Zustand profile store with updated localStorage data
-      onNavigate('round-end')
+
+      const failedRecords = getFailedRecords()
+      // Build replay exercises: clone failed exercises with blanks reset
+      const replayExercises = failedRecords.map(r => {
+        const ex = exercises[r.exerciseIndex]
+        return {
+          ...ex,
+          blanks: ex.blanks.map(b => ({ ...b, filledChar: null, state: 'empty' as const })),
+        } satisfies IExercise
+      })
+
+      const config = gameState.config
+      useSessionStore.getState().endRound({
+        subject: 'slovencina',
+        routes: { setupPage: 'game-setup', gamePage: 'game' },
+        lastRoundResult: result,
+        gameStatus: gameState.status,
+        failedExercises: failedRecords,
+        replayExercises,
+        rendererKey: 'slovencina',
+        gameConfig: config,
+        restartRound: () => startRound(config),
+        resetGame,
+      })
+
+      onNavigate(failedRecords.length > 0 ? 'replay' : 'round-end')
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [gameState?.status])
@@ -66,8 +96,9 @@ export function GamePage({ onNavigate }: GamePageProps) {
   const timerActive = !!(gameState?.config.timerEnabled && gameState.status === 'playing' && !advancing)
 
   const handleTimerExpire = useCallback(() => {
+    markFailed('timeout')
     loseHeart()
-  }, [loseHeart])
+  }, [markFailed, loseHeart])
 
   useTimer({
     active: timerActive,

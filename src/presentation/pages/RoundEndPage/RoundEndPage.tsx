@@ -1,6 +1,5 @@
 import './RoundEndPage.css'
-import { useGame } from '../../hooks/useGame'
-import { useMathGame } from '../../hooks/useMathGame'
+import { useSessionStore } from '../../store/sessionStore'
 import { useProfile } from '../../hooks/useProfile'
 import { LevelBadge } from '../../components/LevelBadge/LevelBadge'
 import { XPBar } from '../../components/XPBar/XPBar'
@@ -9,7 +8,6 @@ import type { AppPage } from '../../../App'
 
 interface RoundEndPageProps {
   onNavigate: (page: AppPage) => void
-  isMath?: boolean
 }
 
 function AccuracyStar({ accuracy }: { accuracy: number }) {
@@ -25,39 +23,31 @@ function AccuracyStar({ accuracy }: { accuracy: number }) {
   )
 }
 
-export function RoundEndPage({ onNavigate, isMath = false }: RoundEndPageProps) {
-  const slovGame = useGame()
-  const mathGame = useMathGame()
-
-  const lastRoundResult = isMath ? mathGame.lastRoundResult : slovGame.lastRoundResult
-  const gameStatus = isMath
-    ? mathGame.gameState?.status
-    : slovGame.gameState?.status
-  const resetGame = isMath ? mathGame.resetGame : slovGame.resetGame
+export function RoundEndPage({ onNavigate }: RoundEndPageProps) {
+  const snapshot = useSessionStore(s => s.snapshot)
+  const clearSession = useSessionStore(s => s.clearSession)
   const { activeProfile } = useProfile()
 
-  if (!lastRoundResult || !activeProfile) {
+  if (!snapshot || !activeProfile) {
     onNavigate('profile-select')
     return null
   }
 
+  const { lastRoundResult, gameStatus, routes, restartRound, resetGame } = snapshot
   const isGameOver = gameStatus === 'game_over'
   const accuracy = lastRoundResult.accuracy
   const pct = Math.round(accuracy * 100)
 
   const handlePlayAgain = () => {
-    if (isMath) {
-      mathGame.startRound(mathGame.gameState!.config)
-      onNavigate('math-game')
-    } else {
-      slovGame.startRound(slovGame.gameState!.config)
-      onNavigate('game')
-    }
+    restartRound()
+    clearSession()
+    onNavigate(routes.gamePage)
   }
 
   const handleSetup = () => {
     resetGame()
-    onNavigate(isMath ? 'math-setup' : 'game-setup')
+    clearSession()
+    onNavigate(routes.setupPage)
   }
 
   return (
