@@ -5,6 +5,7 @@ import { useProfile } from '../../hooks/useProfile'
 import { XPBar } from '../XPBar/XPBar'
 import { LevelBadge } from '../LevelBadge/LevelBadge'
 import { PinManageModal } from '../PinManageModal/PinManageModal'
+import { useAuthStore } from '../../store/authStore'
 import { avatarEmoji } from '../../../utils/avatars'
 import { SKILL_CAPS } from '../../../domain/entities/skill.entity'
 import type { ISkills, SkillKey } from '../../../domain/entities/skill.entity'
@@ -23,6 +24,8 @@ export function AppToolbar({ onBack }: AppToolbarProps) {
   const [menuOpen, setMenuOpen] = useState(false)
   const [showPinModal, setShowPinModal] = useState(false)
   const menuRef = useRef<HTMLDivElement>(null)
+  const firebaseAvailable = useAuthStore(s => s.firebaseAvailable)
+  const authMode = useAuthStore(s => s.authMode)
 
   // Close on click outside
   useEffect(() => {
@@ -103,6 +106,17 @@ export function AppToolbar({ onBack }: AppToolbarProps) {
               )}
             </button>
 
+            {firebaseAvailable && authMode === 'local' && (
+              <button
+                className="app-toolbar__dropdown-item"
+                role="menuitem"
+                onClick={() => { setMenuOpen(false); navigate({ to: '/auth/upgrade' }) }}
+                data-testid="menu-upgrade"
+              >
+                ☁️ Vytvoriť účet
+              </button>
+            )}
+
             <button
               className="app-toolbar__dropdown-item"
               role="menuitem"
@@ -112,14 +126,16 @@ export function AppToolbar({ onBack }: AppToolbarProps) {
               🚪 Odhlásiť sa
             </button>
 
-            <button
-              className="app-toolbar__dropdown-item"
-              role="menuitem"
-              onClick={() => { setMenuOpen(false); setShowPinModal(true) }}
-              data-testid="menu-pin"
-            >
-              🔒 {activeProfile.pinHash ? 'Zmeniť PIN' : 'Nastaviť PIN'}
-            </button>
+            {authMode === 'local' && (
+              <button
+                className="app-toolbar__dropdown-item"
+                role="menuitem"
+                onClick={() => { setMenuOpen(false); setShowPinModal(true) }}
+                data-testid="menu-pin"
+              >
+                🔒 {activeProfile.pinHash ? 'Zmeniť PIN' : 'Nastaviť PIN'}
+              </button>
+            )}
           </div>
         )}
       </div>

@@ -3,11 +3,15 @@
  *
  * Route structure:
  *   /                              → redirect to /login
- *   /login                         → ProfileSelectPage
- *   /register                      → CreateProfilePage
+ *   /login                         → ProfileSelectPage (local profiles)
+ *   /register                      → CreateProfilePage (local profile wizard)
+ *   /auth/login                    → AuthLoginPage (Firebase username+password)
+ *   /auth/register                 → AuthRegisterPage (Firebase account creation)
+ *   /auth/reset-password           → ResetPasswordPage
  *   /_auth                         → pathless layout with auth guard (beforeLoad)
  *   /_auth/dashboard               → SubjectSelectPage
  *   /_auth/skills                  → SkillsPage
+ *   /_auth/auth/upgrade             → UpgradeProfilePage
  *   /_auth/game/slovencina/setup   → GameSetupPage
  *   /_auth/game/slovencina/play    → GamePage
  *   /_auth/game/slovencina/replay  → ReplayPage
@@ -17,6 +21,7 @@
  *   /_auth/game/round-end          → RoundEndPage
  */
 
+import { lazy, Suspense } from 'react'
 import {
   createRootRoute,
   createRoute,
@@ -37,10 +42,20 @@ import { MathGamePage } from './presentation/pages/MathGamePage/MathGamePage'
 import { ReplayPage } from './presentation/pages/ReplayPage/ReplayPage'
 import { RoundEndPage } from './presentation/pages/RoundEndPage/RoundEndPage'
 
+// Lazy-loaded Firebase auth pages (split into firebase chunk)
+const AuthLoginPage = lazy(() => import('./presentation/pages/AuthLoginPage/AuthLoginPage').then(m => ({ default: m.AuthLoginPage })))
+const AuthRegisterPage = lazy(() => import('./presentation/pages/AuthRegisterPage/AuthRegisterPage').then(m => ({ default: m.AuthRegisterPage })))
+const ResetPasswordPage = lazy(() => import('./presentation/pages/ResetPasswordPage/ResetPasswordPage').then(m => ({ default: m.ResetPasswordPage })))
+const UpgradeProfilePage = lazy(() => import('./presentation/pages/UpgradeProfilePage/UpgradeProfilePage').then(m => ({ default: m.UpgradeProfilePage })))
+
 // ─── Root route ─────────────────────────────────────────────────────────────
 
 const rootRoute = createRootRoute({
-  component: Outlet,
+  component: () => (
+    <Suspense fallback={null}>
+      <Outlet />
+    </Suspense>
+  ),
 })
 
 // ─── Public routes ──────────────────────────────────────────────────────────
@@ -66,6 +81,32 @@ const registerRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: '/register',
   component: CreateProfilePage,
+})
+
+// ─── Firebase auth routes ───────────────────────────────────────────────────
+
+const authLoginRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: '/auth/login',
+  component: AuthLoginPage,
+})
+
+const authRegisterRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: '/auth/register',
+  component: AuthRegisterPage,
+})
+
+const resetPasswordRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: '/auth/reset-password',
+  component: ResetPasswordPage,
+})
+
+const upgradeProfileRoute = createRoute({
+  getParentRoute: () => authLayoutRoute,
+  path: '/auth/upgrade',
+  component: UpgradeProfilePage,
 })
 
 // ─── Authenticated layout (pathless) ────────────────────────────────────────
@@ -172,9 +213,13 @@ const routeTree = rootRoute.addChildren([
   indexRoute,
   loginRoute,
   registerRoute,
+  authLoginRoute,
+  authRegisterRoute,
+  resetPasswordRoute,
   authLayoutRoute.addChildren([
     dashboardRoute,
     skillsRoute,
+    upgradeProfileRoute,
     slovencinaSetupRoute,
     slovencinaPlayRoute,
     slovencinaReplayRoute,

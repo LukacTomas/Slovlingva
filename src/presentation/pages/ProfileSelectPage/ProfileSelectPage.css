@@ -232,3 +232,39 @@
     opacity: 1;
   }
 }
+
+/* ── Auth section (Firebase sign-in / register) ────────────────────────── */
+
+.profile-select__auth-section {
+  width: 100%;
+  max-width: 400px;
+  margin-top: var(--space-lg);
+}
+
+.profile-select__divider {
+  display: flex;
+  align-items: center;
+  gap: var(--space-md);
+  margin-bottom: var(--space-md);
+  color: var(--color-text-muted);
+  font-size: var(--font-size-sm);
+  font-weight: 600;
+}
+
+.profile-select__divider::before,
+.profile-select__divider::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: var(--color-border);
+}
+
+.profile-select__auth-buttons {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+}
+
+.profile-select__auth-btn {
+  width: 100%;
+}

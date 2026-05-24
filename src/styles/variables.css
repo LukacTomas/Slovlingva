@@ -69,4 +69,13 @@
   /* Transitions */
   --transition-fast: 150ms ease;
   --transition-med:  300ms ease;
+
+  /* Aliases (used by Firebase auth pages) */
+  --spacing-xs:  var(--space-xs);
+  --spacing-sm:  var(--space-sm);
+  --spacing-md:  var(--space-md);
+  --spacing-lg:  var(--space-lg);
+  --spacing-xl:  var(--space-xl);
+  --color-surface: var(--color-bg-card);
+  --radius-xl:   var(--radius-lg);
 }
